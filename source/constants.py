@@ -1,0 +1,4 @@
+
+
+DIGIT_COUNT = 6
+ALARMS_SET = []
