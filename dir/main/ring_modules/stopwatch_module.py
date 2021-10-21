@@ -24,9 +24,13 @@ class Stopwatch(RingModule):
 
     @property
     def time ():
-        ms_diff = time.ticks_diff(ticks_on_stop, ticks_on_start)
-        milliseconds = ms_diff/10; seconds = (ms_diff/1000)%60; minutes = (seconds*60)%60
-        return ( minutes * 1000 ) + ( seconds * 100 ) + (milliseconds%100)
+        micro_s_diff = time.ticks_diff(ticks_on_stop, ticks_on_start)
+
+        ms = micro_s_diff/10
+        s = micro_s_diff/1000
+        m = micro_s_diff/1000*60
+
+        return ( (m%60) * 1000 ) + ( (s%60) * 100 ) + (ms%100)
 
     def update():
         if self.running:

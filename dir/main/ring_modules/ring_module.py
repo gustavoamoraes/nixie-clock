@@ -24,7 +24,7 @@ class RingModule:
             return _wrapper
         return wrapper
 
-    #Gets called when a step is detected
+    #Gets called when a step is 
     def on_changed (self, q):
         return None
     #Gets called when the select button is pressed
@@ -32,7 +32,7 @@ class RingModule:
         return None
     #Gets called when the back button is pressed
     def on_back (self):
-        self.active = False
-    #Gets called every frame
+        return None
+    #Updates module
     def update (self):
         return None

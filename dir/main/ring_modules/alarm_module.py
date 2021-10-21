@@ -38,10 +38,7 @@ class Alarm(RingModule):
         self.profile.display_number = self.current_number
 
         return self.profile
-    
-    def on_back(self):
-        super().on_back()
-        
+
     def on_select ():
 
         self.digit_index += (2 + ((self.digit_index + 1) % 4)) 
@@ -54,8 +51,8 @@ class Alarm(RingModule):
         })
 
         #Highlighting digit 
-        self.profile.duty_cicles = [ (Digit.constant_duty for i in range(constants.DIGIT_COUNT)) 
-        if not i == self.digit_index else Digit.oscillating_duty]
+        self.profile.duty_cicles = [ Digit.constant_duty for i in range(constants.DIGIT_COUNT) 
+        if i != self.digit_index else Digit.oscillating_duty]
 
         #Show alarm time
         self.profile.display_number = set_number

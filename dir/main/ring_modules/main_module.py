@@ -1,4 +1,5 @@
 from ring_module import RingModule
+from constants import DIGIT_COUNT
 from profile import Profile
 
 class MainModule(RingModule):
@@ -9,15 +10,9 @@ class MainModule(RingModule):
         self.active = True
         self.ring_index = 0
 
-        self.profile.ring_colors[0] = (255,0,0)
-        self.profile.ring_colors[1] = (0,255,0)
-        self.profile.ring_colors[2] = (0,0,255)
-
     @RingModule.on_active_child( lambda active_child: active_child.on_changed )
     def on_changed (q):
-        self.profile.color_callbacks[self.ring_index] = RGBLED.constant_color
         self.ring_index = (self.ring_index + q) % len(self.childs)
-        self.profile.color_callbacks[self.ring_index] = RGBLED.oscillating_color
 
     @RingModule.on_active_child( lambda active_child: active_child.on_select )
     def on_select ():
@@ -25,7 +20,7 @@ class MainModule(RingModule):
 
     @RingModule.on_active_child( lambda active_child: active_child.on_back )
     def on_back ():
-        pass
+        super().on_back()
 
     @RingModule.on_active_child( lambda active_child: active_child.update )
     def update():

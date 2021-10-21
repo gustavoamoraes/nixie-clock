@@ -1,13 +1,12 @@
 class Profile ():
-    def __init__ (number, duty_callback, ring_colors, color_callbacks):
-        self.display_number = number
-        self.duty_callbacks = duty_callbacks
-        self.ring_colors = ring_colors
-        self.color_callbacks = color_callbacks
+    def __init__ (number, duty_callback, ring_colors):
+        self._display_number = number
+        self._duty_callbacks = duty_callbacks
+        self._ring_colors = ring_colors
 
     @staticmethod
     def default():
-        return Profile(0, [Digit.constant_duty] * constants.DIGIT_COUNT, [(0,0,0)] * constants.LED_RING_COUNT, [RGBLED.constant_color] * constants.LED_RING_COUNT)
+        return Profile(0, [Digit.constant_duty for i in range( constants.DIGIT_COUNT )])
 
     '''
     #Custom set function that calls the callback when any member is changed

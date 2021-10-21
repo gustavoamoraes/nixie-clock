@@ -7,14 +7,11 @@ class Clock (RingModule):
         self.tiny_rtc.on_second_passed += lambda: setattr(self, 'update', True)
 
         self.update = False
-
-    def on_back(self):
-        super().on_back()
-           
+            
     def update (self):
         if self.update:
             datetime = tiny_rtc.datetime
-            self.profile.display_number = (datetime[2] * 10000)  + (datetime[1] * 100) + datetime[0]
+            self.profile.display_number = (datetime[1] * 10000)  + (datetime[1] * 100) + datetime[0]
             self.update = False
 
             return self.profile
