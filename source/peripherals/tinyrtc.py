@@ -1,5 +1,6 @@
 from machine import Pin
 import ujson as json
+from event import Event
 
 class TinyRTC ():
     def __init__ (self, sq_pin, ds, eeprom):
@@ -49,8 +50,7 @@ class TinyRTC ():
         self.eeprom.write(2, data)
 
     def get_object (self, key):
-        obj = self.eeprom_objects[key] if key in self.eeprom_objects else None
-        return obj
+        return self.eeprom_objects[key] if key in self.eeprom_objects else None
 
     def set_datetime (g):
         self.ds.datetime(g)
@@ -59,15 +59,3 @@ class TinyRTC ():
     def update_datetime ():
         self.datetime = ds.datetime()
 
-class Event ():
-
-    def __init__ (self):
-        self.handlers = []
-
-    def __add__ (self, a):
-        self.handlers.append(a)
-        return self
-
-    def __call__ (self, *args, **kwargs):
-        for handler in self.handlers:
-            handler()

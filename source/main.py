@@ -3,7 +3,7 @@ from tinyrtc import TinyRTC
 import at24c32n
 import ds1307
 import srmultiplexer
-
+import ntptime
 #import uasyncio
 #import neopixel
 #import socket
@@ -12,22 +12,12 @@ import os
 
 from button import Button
 from main_module import MainModule
-from alarm_module import Alarm
-from stopwatch_module import Stopwatch
+
+#from alarm_module import Alarm
+#from stopwatch_module import Stopwatch
 from clock_module import Clock
 from rotary_encoder import RotaryEncoder
 from common_funcs import digit_at
-
-
-# HTML Server
-# page_text = open('page.html', 'r').read()
-# addr = socket.getaddrinfo('0.0.0.0', 80)[0][-1]
-
-# s = socket.socket()
-# s.bind(addr)
-# s.listen(1)
-
-# print('listening on', addr)
 
 #Led ring
 ring_channel = srmultiplexer.multiplexchannel(10,3)
@@ -37,9 +27,24 @@ srmultiplexer.start([ring_channel], 255)
 #np = neopixel.NeoPixel(machine.Pin(4), 6)
 
 #Inputs
-ring_wheel = RotaryEncoder(33, 32)
-select_button = Button(Pin(12, Pin.IN, Pin.PULL_UP), 1, Pin.FALLING, 50)
-back_button = Button(Pin(32, Pin.IN, Pin.PULL_UP), 1, Pin.FALLING, 50)
+ring_wheel = RotaryEncoder(Pin(33, Pin.IN, Pin.PULL_DOWN), Pin(32, Pin.IN, Pin.PULL_DOWN))
+ring_wheel_displacement = [0]
+ring_wheel.on_step += lambda s: add(ring_wheel_displacement, s)
+
+def add (o, v):
+o[0] += v
+print(o[0])
+
+select_button = Button(Pin(12, Pin.IN, Pin.PULL_DOWN), Pin.PULL_DOWN, Button.BUTTON_DOWN)
+select_button_value = [False]
+select_button.on_button += lambda: set(select_button_value)
+
+back_button = Button(Pin(33, Pin.IN, Pin.PULL_DOWN), Pin.PULL_DOWN, Button.BUTTON_DOWN)
+back_button_value = [False]
+back_button.on_button += lambda: set(back_button_value)
+
+def set (b):
+    b[0] = True
 
 #Outputs
 # digits_register_cs_pin = machine.Pin(0)
@@ -48,7 +53,6 @@ back_button = Button(Pin(32, Pin.IN, Pin.PULL_UP), 1, Pin.FALLING, 50)
 # current_duty = 1024
 # background_color = (50,0,50)
 
-ocilator = Ocilator()
 '''
 digits = [
     Digit(0, Digit.constant_duty, Pin(1, Pin.OUT), ocilator),
@@ -82,14 +86,15 @@ eeprom = at24c32n.AT24C32N(i2c)
 tiny_rtc = TinyRTC(sq_pin, ds, eeprom)
 
 #Set the time by ntptime
-# ntptime.settime(timezone=-3)
-# f = utime.localtime()
-# g = f[0],f[1],f[2],f[6],(f[3]+8),f[4],f[5]
-# tiny_rtc.set_datetime(g)
+ntptime.settime()
+t = utime.localtime(utime.mktime(utime.localtime()) - 3*3600)
+g = t[0],t[1],t[2],t[6],t[3],t[4],t[5]
+tiny_rtc.set_datetime(g)
 
-#print('initial datetime on ds1307 is...', tiny_rtc.datetime)
+print('initial datetime on ds1307 is...', tiny_rtc.datetime)
 
-#tiny_rtc.on_second_passed += ocilator.reset
+ocilator = Ocilator()
+tiny_rtc.on_second_passed += ocilator.reset
 
 #Ring module
 clock = Clock(tiny_rtc); #alarm = Alarm(tiny_rtc); stopwatch = Stopwatch()
@@ -104,7 +109,7 @@ def check_alarm ():
     minute = time[0]
     seconds = time[1]
 
-    if minute == tiny_rtc.datetime[1] and tiny_rtc.datetime[2] == seconds :
+    if minute == tiny_rtc.datetime[1] and seconds == tiny_rtc.datetime[0] :
         trigger_alarm()
 
 def trigger_alarm ():
@@ -122,8 +127,7 @@ def set_digits (n, cbs):
         digits[i].duty_callback = cbs[i]
 
 def set_rgb_leds (colors, color_callbacks):
-    colors_length = len(colors)
-    for i in range(colors_length):
+    for i in range(len(colors)):
         rgb_leds[i].base_color = colors[i]
         rgb_leds[i].color_callback = color_callbacks[i]
 
@@ -152,35 +156,6 @@ def apply_profile (profile):
     #set_digits (profile.display_number, profile.duty_cicles)
     set_rgb_leds(profile.ring_colors, profile.color_callbacks)
 
-def server():
-
-    while True:
-
-        cl, addr = s.accept()
-        print('client connected from', addr)
-        cl_file = cl.makefile('rwb', 0)
-
-        length = 0
-
-        while True:
-            line = cl.readline()
-            if not line or line == b'\r\n':
-                break
-            if 'Content-Length: ' in line:
-                length = int(line[16:-2])
-
-        cl.send('HTTP/1.0 200 OK\r\nContent-type: text/html\r\n\r\n')
-
-        if length:
-            postquery = cl.read(length)
-            request = ujson.loads(postquery)
-                
-        cl.sendall(page_text)
-        cl.close()
-
-def button_timer (timers, interval, boolean):
-
-
 def main ():
 
     while True:
@@ -189,15 +164,19 @@ def main ():
 
         profile = None
 
-        if not (dir := ring_wheel.direction) == 0:
-            profile = main_module.on_changed(dir) or profile
+        #if not (dir := ring_wheel.direction) == 0:
+        if not ring_wheel_displacement == 0:
+            profile = main_module.on_changed(ring_wheel_displacement) or profile
+            ring_wheel_displacement = 0
 
-        if select_button.value():
+        if select_button_value[0]:
             profile = main_module.on_select() or profile
+            select_button_value[0] = False
         
-        if back_button.value():
+        if back_button_value[0]:
             profile = main_module.on_back() or profile
+            back_button_value[0] = False
 
         profile = main_module.update() or profile
 
-        #apply_profile(profile)
+        apply_profile(profile)

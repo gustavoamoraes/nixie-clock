@@ -1,25 +1,42 @@
 import time
+from machine import Pin
+from event import Event
 
 class Button ():
-    def __init__(self, pin, slot_count, trigger, set_interval):
-        self.pin = pin
-        self.pin.irq(self.set_all, trigger)
-        self.slot_count = slot_count
-        self.slots = [False] * slot_count
-        self.slot_timers = [(0,0)] * slot_count
-        self.set_interval = set_interval
 
-    def value ():
-        for i, j in enumerate(self.slots):
-            if j:
-                self.slots[i] = False
-                return j
-        return False
+    BUTTON_DOWN = 1
+    BUTTON_UP = 2
+    DELAY = 50
 
-    def set_all ():
-        for i, j in enumerate(self.slots):
-            diff = self.slot_timers[i][1] - self.slot_timers[i][0]
-            if diff > self.set_interval:
-                self.slots[i] = True
-                self.slot_timers[i][0] = time.ticks_ms()
-            self.slot_timers[i][1] = time.ticks_ms()
+    def __init__(self, pin, pin_pull, button_mode):
+
+        pin.irq(self.input_handler, Pin.IRQ_FALLING | Pin.IRQ_RISING)
+
+        self.on_button = Event()
+        self.button_mode = button_mode
+        self.on_state = not (pin_pull - 1)
+        self.off_timer = 0
+        self.on_timer = 0
+        self.last_state = 1
+    
+    def input_handler (self, pin):
+        if pin.value() == self.on_state:
+            off_diff = time.ticks_ms() - self.off_timer
+
+            if off_diff > Button.DELAY and self.last_state == (not self.on_state):
+                
+                if self.button_mode == 1:
+                    self.on_button()
+
+                self.on_timer = time.ticks_ms()
+                self.last_state = self.on_state
+        else:
+            on_diff = time.ticks_ms() - self.on_timer
+
+            if on_diff > Button.DELAY and self.last_state == self.on_state:
+
+                if self.button_mode == 2:
+                    self.on_button()
+
+                self.off_timer = time.ticks_ms()
+                self.last_state = not self.on_state
