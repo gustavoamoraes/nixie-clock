@@ -28,12 +28,6 @@ srmultiplexer.start([ring_channel], 255)
 
 #Inputs
 ring_wheel = RotaryEncoder(Pin(33, Pin.IN, Pin.PULL_DOWN), Pin(32, Pin.IN, Pin.PULL_DOWN))
-ring_wheel_displacement = [0]
-ring_wheel.on_step += lambda s: add(ring_wheel_displacement, s)
-
-def add (o, v):
-o[0] += v
-print(o[0])
 
 select_button = Button(Pin(12, Pin.IN, Pin.PULL_DOWN), Pin.PULL_DOWN, Button.BUTTON_DOWN)
 select_button_value = [False]
@@ -164,10 +158,8 @@ def main ():
 
         profile = None
 
-        #if not (dir := ring_wheel.direction) == 0:
-        if not ring_wheel_displacement == 0:
-            profile = main_module.on_changed(ring_wheel_displacement) or profile
-            ring_wheel_displacement = 0
+        if not (dir := ring_wheel.direction) == 0:
+            profile = main_module.on_changed(dir) or profile
 
         if select_button_value[0]:
             profile = main_module.on_select() or profile
