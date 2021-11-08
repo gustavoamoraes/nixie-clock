@@ -16,5 +16,4 @@ class Clock (RingModule):
             datetime = tiny_rtc.datetime
             self.profile.display_number = (datetime[2] * 10000)  + (datetime[1] * 100) + datetime[0]
             self.update = False
-
             return self.profile

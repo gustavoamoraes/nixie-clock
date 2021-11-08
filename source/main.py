@@ -4,17 +4,14 @@ import at24c32n
 import ds1307
 import srmultiplexer
 import ntptime
-#import uasyncio
-#import neopixel
-#import socket
+import neopixel
 import machine
-import os
+import server
 
 from button import Button
 from main_module import MainModule
-
-#from alarm_module import Alarm
-#from stopwatch_module import Stopwatch
+from alarm_module import Alarm
+from stopwatch_module import Stopwatch
 from clock_module import Clock
 from rotary_encoder import RotaryEncoder
 from common_funcs import digit_at
@@ -24,7 +21,7 @@ ring_channel = srmultiplexer.multiplexchannel(10,3)
 srmultiplexer.start([ring_channel], 255)
 
 #Neo Pixels
-#np = neopixel.NeoPixel(machine.Pin(4), 6)
+np = neopixel.NeoPixel(machine.Pin(4), 6)
 
 #Inputs
 ring_wheel = RotaryEncoder(Pin(33, Pin.IN, Pin.PULL_DOWN), Pin(32, Pin.IN, Pin.PULL_DOWN))
@@ -41,13 +38,9 @@ def set (b):
     b[0] = True
 
 #Outputs
-# digits_register_cs_pin = machine.Pin(0)
+digits_register_cs_pin = machine.Pin(0)
 
-# #Settings#
-# current_duty = 1024
-# background_color = (50,0,50)
-
-'''
+#Peripherals
 digits = [
     Digit(0, Digit.constant_duty, Pin(1, Pin.OUT), ocilator),
     Digit(0, Digit.constant_duty, Pin(2, Pin.OUT), ocilator),
@@ -56,7 +49,7 @@ digits = [
     Digit(0, Digit.constant_duty, Pin(5, Pin.OUT), ocilator),
     Digit(0, Digit.constant_duty, Pin(6, Pin.OUT), ocilator),
 ]
-'''
+
 rgb_leds = [
     RGBLED(RGBLED.constant_color, ocilator),
     RGBLED(RGBLED.constant_color, ocilator),
@@ -70,22 +63,21 @@ rgb_leds = [
     RGBLED(RGBLED.constant_color, ocilator),
 ]
 
-#digits_register = SPI(2)
+digits_register = SPI(2)
 
 #Tiny RTC
 i2c = I2C(1)
 ds = ds1307.DS1307(i2c)
-sq_pin = Pin(33, Pin.IN)
 eeprom = at24c32n.AT24C32N(i2c)
+sq_pin = Pin(33, Pin.IN)
 tiny_rtc = TinyRTC(sq_pin, ds, eeprom)
 
-#Set the time by ntptime
+#Set the local time by ntptime
 ntptime.settime()
 t = utime.localtime(utime.mktime(utime.localtime()) - 3*3600)
 g = t[0],t[1],t[2],t[6],t[3],t[4],t[5]
 tiny_rtc.set_datetime(g)
-
-print('initial datetime on ds1307 is...', tiny_rtc.datetime)
+print('Initial datetime on DS1307 is: ', tiny_rtc.datetime)
 
 ocilator = Ocilator()
 tiny_rtc.on_second_passed += ocilator.reset
@@ -110,7 +102,7 @@ def trigger_alarm ():
     buildinled = Pin(2, Pin.OUT)
     buildinled.value(1)
 
-def set_background_color ():
+def set_background_color (background_color):
     for i in range(len(digits)):
         np[i] = background_color
 
@@ -124,6 +116,36 @@ def set_rgb_leds (colors, color_callbacks):
     for i in range(len(colors)):
         rgb_leds[i].base_color = colors[i]
         rgb_leds[i].color_callback = color_callbacks[i]
+
+def set_config(json):
+    
+    if not 'config' in json.keys():
+        print('Config object not given in json.')
+        return
+
+    old_config = get_config()
+    new_config = json['config']
+
+    #Set digits brightness
+    if 'digits_brightness' in config:
+        for digit in digits:
+            val = new_config['digits_brightness']
+            scale = max(min(val, 1.0), 0.0)
+            digit.base_duty = scale * 1024
+
+        old_config['digits_brightness'] = val
+
+    if 'background_color' in config:
+        val = config['background_color']
+        set_background_color(val)
+        old_config['background_color'] = val
+
+    tiny_rtc.write_obj(config)
+
+def get_config():
+    text = tiny_rtc.get_object('config')
+    obj = json.loads(text)
+    return obj
 
 #Called every frame
 def update_digits ():
@@ -147,14 +169,12 @@ def apply_profile (profile):
     if not profile == type(Profile):
         return
         
-    #set_digits (profile.display_number, profile.duty_cicles)
+    # set_digits (profile.display_number, profile.duty_cicles)
     set_rgb_leds(profile.ring_colors, profile.color_callbacks)
 
-def main ():
+def led_ring_update_loop ():
 
     while True:
-        
-        ocilator.update()
 
         profile = None
 
@@ -172,3 +192,11 @@ def main ():
         profile = main_module.update() or profile
 
         apply_profile(profile)
+
+#Create thread for
+    #ocilator.update()
+    #led_ring_update_loop()
+    #update_digits ()
+    #update_leds()
+    #server.run_server()
+

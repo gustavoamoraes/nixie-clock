@@ -32,5 +32,4 @@ class MainModule(RingModule):
         index_child = self.childs[self.ring_index]
         index_child.update()
         self.profile.display_number = index_child.profile.display_number
-
         return self.profile

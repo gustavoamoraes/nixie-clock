@@ -17,22 +17,12 @@ class Alarm(RingModule):
     #Return a tupple with (MM, SS) of the alarm time set
     @property
     def time():
-        return 
-        (
-            digit_at(self.set_number, 3) * 10
-            + digit_at(self.set_number, 2),
-
-            digit_at(self.set_number, 5) * 10
-            + digit_at(self.set_number, 4),
-        )
+        return (digit_at(self.set_number, 3) * 10 + digit_at(self.set_number, 2), 
+        digit_at(self.set_number, 5) * 10 + digit_at(self.set_number, 4),)
 
     def on_changed (q):
         self.ring_index = (self.ring_index + q) % constants.LED_RING_COUNT
-
-        place = pow(10, ring_index)
-
-        self.current_number = self.set_number - (place * digit_at(self.set_number, self.ring_index)) 
-        + (place * self.ring_index)
+        self.current_number = self.set_number - ((place := pow(10, ring_index))  * digit_at(self.set_number, self.ring_index)) + (place * self.ring_index)
 
         #Show alarm time being choosen
         self.profile.display_number = self.current_number
@@ -48,10 +38,7 @@ class Alarm(RingModule):
         self.ring_index = digit_at(self.current_number, self.digit_index) 
         self.set_number = self.current_number
 
-        self.tiny_rtc.write_object( 
-        { 
-            "alarm_time": self.time
-        })
+        self.tiny_rtc.write_object({ "alarm_time": self.time })
 
         #Highlighting digit 
         self.profile.duty_cicles = [ (Digit.constant_duty for i in range(constants.DIGIT_COUNT)) 

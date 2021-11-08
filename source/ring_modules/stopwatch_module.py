@@ -32,5 +32,4 @@ class Stopwatch(RingModule):
         if self.running:
             self.ticks_on_stop = time.ticks_ms()
             self.profile.display_number = self.time
-            
             return self.profile

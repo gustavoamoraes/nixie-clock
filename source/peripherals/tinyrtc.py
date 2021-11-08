@@ -9,19 +9,21 @@ class TinyRTC ():
         self.eeprom = eeprom
         self.sq_pin = sq_pin
 
-        self.bytes_written = int.from_bytes(self.eeprom.read(0, 2), 'big')
-        self.eeprom_objects = self.get_objects_from_eemprom()
+        self.bytes_written = int.from_bytes(self.eeprom.read(0, 2), 'big') #Bytes written to the eeprom excluding the first 2
+        self.eeprom_objects = self.get_objects_from_eemprom() #All objects written to the eemprom
 
-        self.datetime = None
+        self.datetime = None #Last time got
         self.on_second_passed = Event () 
         
-        #1Hz square wave
+        #Set square wave to 1Hz for the each-second event.
         self.ds.square_wave(1, 0) 
-        #Interrupt
+        
+        #Set the event interrupt
         sq_pin.irq(handler=self.on_second_passed, trigger=Pin.IRQ_RISING) 
 
         self.ds.halt(False)
 
+        #Update datetime each second
         self.on_second_passed += self.update_datetime
 
     def get_objects_from_eemprom (self):
@@ -32,7 +34,6 @@ class TinyRTC ():
             objects = json.loads(data)
         except:
             print('An error occour when reading data from the eeprom. Bytes written: {}'.format(self.bytes_written))
-
         return objects
 
     def reset_eemprom (self):
