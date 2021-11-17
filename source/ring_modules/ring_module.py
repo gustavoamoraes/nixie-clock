@@ -1,5 +1,4 @@
-from main import RingModule
-import constants 
+from profile import Profile
 
 class RingModule:
 
@@ -12,8 +11,11 @@ class RingModule:
 
     #Returns first active child 
     @property
-    def active_child ():
-        return next((c for c in self.childs if c.active), None)
+    def active_child (self):
+        try:
+            return next(c for c in self.childs if c.active)
+        except StopIteration:
+            return None
 
     def on_active_child (child_func):
         def wrapper(parent_func):

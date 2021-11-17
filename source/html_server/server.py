@@ -1,16 +1,12 @@
 from http_response import HTTPResponse
 from http_request import HTTPRequest
-import uasyncio as asyncio
+from main import set_config
+import asyncio as asyncio
 import ujson as json
 from test import *
 import socket
 import sys
 import os 
-
-# current_path = os.path.dirname(os.path.abspath(__file__))
-# parrent_dir = os.path.dirname(current_path)
-# sys.path.append(os.path.normpath(parrent_dir))
-# from main import set_config, get_config
 
 with open('file-extension-to-mime-types.json') as json_file:
     extention_to_mimes_types = json.load(json_file)
@@ -18,12 +14,13 @@ with open('file-extension-to-mime-types.json') as json_file:
 
 static_files_path = './static/'
 
+#Views
 def static_files_list (request):
     files = os.listdir(static_files_path)
     file_list = ''.join('<li> <a href="/static/{file_name}"> {file_name} </a> </li>'.format(file_name=name) for name in files)
     return HTTPResponse('<ul> {} </ul>'.format(file_list).encode())
 
-def get_static_file (request, file_name):
+def static_file (request, file_name):
 
     file_path = static_files_path + file_name
     file_extention = '.' + file_name.rsplit('.', 1)[-1]
@@ -47,14 +44,12 @@ def get_static_file (request, file_name):
 def home_page (request):
     return HTTPResponse(b'<script> window.location.href=\'./static/page.html\'; </script>')
 
-clock_config = {'foda': 123}
-
 def config_api (request):
 
     global clock_config
 
     if request.method == 'POST' and (post := request.POST):
-        clock_config = post
+        set_config(post)
         return HTTPResponse()
     else:
         data = json.dumps(clock_config).encode()
@@ -62,7 +57,7 @@ def config_api (request):
 
 paths = [Path ('/', home_page),
     Path ('static', static_files_list),
-    Path ('static/<file_name>', get_static_file),
+    Path ('static/<file_name>', static_file),
     Path ('api/config', config_api)]
 
 create_tree(paths)

@@ -42,19 +42,46 @@ bg_range.on('input', function ()
 {
     val = bg_range.val();
     max = last_bg_color[2]
+    scale = Math.round(digits_range.val()/100)
 
-    pickr.setColor(`hsl (${last_bg_color[0]}, ${last_bg_color[1]}, ${(val/100) * max})`, true);
+    pickr.setColor(`hsl (${last_bg_color[0]}, ${last_bg_color[1]}, ${scale * max})`, true);
     pickr.applyColor(true);
 
     bg_range_label.text(`(${val}%)`);
 });
 
-pickr.on('save', (color, instance) => {
+pickr.on('save', (color) => {
     last_bg_color = color.toHSLA()
     bg_range.val(100).trigger("input")
 });
 
 digits_range.trigger('input')
 bg_range.trigger('input')
-ring_range.trigger('input')
+// ring_range.trigger('input')
 
+var submit_button = $('#submit_button')
+submit_button.on('click', on_submit);
+
+function on_submit ()
+{   
+    let rgb_color = pickr.getColor().toRGBA();
+    let brigthness_scale = Math.round(digits_range.val()/100);
+
+    const data = {
+            "config": 
+                    {
+                        "digits_brightness": brigthness_scale,
+                        "background_color": `${rgb_color[0]}, ${rgb_color[1]}, ${rgb_color[2]}`,
+                    }
+                }
+
+    fetch("../apí/config", 
+    {
+        method: "POST",
+        headers: 
+        {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    })
+}

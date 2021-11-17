@@ -10,7 +10,6 @@ class Digit:
         self.base_duty = 1024;
         self.ocilator = ocilator
 
-    @property
     def duty():
         return duty_callback()
 

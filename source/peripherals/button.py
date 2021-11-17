@@ -6,9 +6,8 @@ class Button ():
 
     BUTTON_DOWN = 1
     BUTTON_UP = 2
-    DELAY = 50
 
-    def __init__(self, pin, pin_pull, button_mode):
+    def __init__(self, pin, pin_pull, button_mode, interval):
 
         pin.irq(self.input_handler, Pin.IRQ_FALLING | Pin.IRQ_RISING)
 
@@ -18,12 +17,13 @@ class Button ():
         self.off_timer = 0
         self.on_timer = 0
         self.last_state = 1
+        self.interval = interval
     
     def input_handler (self, pin):
         if pin.value() == self.on_state:
             off_diff = time.ticks_ms() - self.off_timer
 
-            if off_diff > Button.DELAY and self.last_state == (not self.on_state):
+            if off_diff > self.interval and self.last_state == (not self.on_state):
                 
                 if self.button_mode == 1:
                     self.on_button()
@@ -33,7 +33,7 @@ class Button ():
         else:
             on_diff = time.ticks_ms() - self.on_timer
 
-            if on_diff > Button.DELAY and self.last_state == self.on_state:
+            if on_diff > self.interval and self.last_state == self.on_state:
 
                 if self.button_mode == 2:
                     self.on_button()
