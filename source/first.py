@@ -30,20 +30,20 @@ srmultiplexer.start([ring_channel], 255)
 # np = neopixel.NeoPixel(machine.Pin(4), 6)
 
 #Inputs
-ring_wheel = RotaryEncoder(Pin(33, Pin.IN, Pin.PULL_DOWN), Pin(32, Pin.IN, Pin.PULL_DOWN))
+ring_wheel = RotaryEncoder(Pin(12, Pin.IN, Pin.PULL_DOWN), Pin(27, Pin.IN, Pin.PULL_DOWN))
 
-select_button = Button(Pin(12, Pin.IN, Pin.PULL_UP), Pin.PULL_UP, Button.BUTTON_DOWN)
+select_button = Button(Pin(39, Pin.IN), Pin.PULL_UP, Button.BUTTON_DOWN) #External pull up
 select_button_value = [False]
 select_button.on_button += lambda: set(select_button_value)
 
-back_button = Button(Pin(27, Pin.IN, Pin.PULL_DOWN), Pin.PULL_DOWN, Button.BUTTON_DOWN)
+back_button = Button(Pin(36, Pin.IN), Pin.PULL_UP, Button.BUTTON_DOWN) #External pull up
 back_button_value = [False]
 back_button.on_button += lambda: set(back_button_value)
 
 def set (b):
     b[0] = True
 
-digits_register_cs_pin = machine.Pin(0)
+digits_register_cs_pin = machine.Pin(5)
 digits_register = SPI(2)
 
 #Ocilator
@@ -79,10 +79,9 @@ i2c = I2C(0)
 rtc = pcf8563.PCF8563(i2c) 
 sqw_pin = Pin(35, Pin.IN) #Square wave pin
 
-alarm_interrupt_pin = Pin(35, Pin.IN, handler=lambda pin: trigger_alarm(), trigger=Pin.IRQ_RISING)
-
+alarm_interrupt_pin = Pin(10, Pin.IN, handler=lambda pin: trigger_alarm(), trigger=Pin.IRQ_RISING)
 on_alarm_switch = lambda pin: enable_alarm_interrupt() if pin.value() else disable_alarm_interrupt()
-alarm_switch_pin = Pin(35, Pin.IN, trigger=Pin.IRQ_RISING | Pin.IRQ_FALLING, handler=on_alarm_switch)
+alarm_switch_pin = Pin(9, Pin.IN, trigger=Pin.IRQ_RISING | Pin.IRQ_FALLING, handler=on_alarm_switch) #External pull up
 on_alarm_switch(alarm_switch_pin)
 
 rtc_manager = RTCManager(sqw_pin, rtc)
