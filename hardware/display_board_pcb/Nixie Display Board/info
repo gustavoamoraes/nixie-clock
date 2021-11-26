@@ -4,7 +4,7 @@
   "name": "Nixie Display Board",
   "content": "",
   "created_at": "2021-11-24 20:20:45",
-  "updated_at": "2021-11-26 02:05:49",
+  "updated_at": "2021-11-26 15:29:34",
   "stick": "",
   "documents": [
     {
@@ -104,11 +104,11 @@
         "70aa5812f21f4991bf427395d51849f4": 12
       },
       "BOM": [],
-      "updateTime": 1637899549,
+      "updateTime": 1637947774,
       "createTime": 1637794844,
       "histories": [],
       "created_at": "2021-11-24 21:00:44",
-      "updated_at": "2021-11-26 02:05:49"
+      "updated_at": "2021-11-26 15:29:34"
     }
   ],
   "sort": [],
