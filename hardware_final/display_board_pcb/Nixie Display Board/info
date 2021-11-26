@@ -1,0 +1,119 @@
+{
+  "uuid": "f5b833d550e151083c8da6c9d2eec31f",
+  "path": "Offline/Nixie%20Display%20Board",
+  "name": "Nixie Display Board",
+  "content": "",
+  "created_at": "2021-11-24 20:20:45",
+  "updated_at": "2021-11-26 02:05:49",
+  "stick": "",
+  "documents": [
+    {
+      "uuid": "2962a77a313161e261e1c382df1c78a4",
+      "title": "Sheet_1",
+      "description": "",
+      "docType": "1",
+      "master": "",
+      "thumb": "/images/thumb-default.png",
+      "components": {
+        "6d2a9176194346acbd5ccafcb46952f1": 6,
+        "a9aa2b14f188405792fa87ac344499a4": 12,
+        "a68dc5e6a9944c46b7604648a43dcd65": 1,
+        "29a9ed4bd7e44ab5b1151bac840be6d3": 6
+      },
+      "BOM": [
+        [
+          "Value",
+          "Quantity",
+          "Package",
+          "Components",
+          "CustomPara"
+        ],
+        [
+          "HDR-M-2.54_2x6",
+          6,
+          "HDR-M-2.54_2X6",
+          "J1,J2,J3,J4,J5,J17",
+          {
+            "BOM_Supplier Part": "C124388",
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer": "",
+            "BOM_Manufacturer Part": "",
+            "puuid": "4dd21fdff65e48e89ebd6165b3a5cb41",
+            "uuid": "29a9ed4bd7e44ab5b1151bac840be6d3"
+          }
+        ],
+        [
+          "HDR-M-2.54_1x3",
+          1,
+          "HDR-M-2.54_1X3",
+          "J6",
+          {
+            "BOM_Supplier Part": "C180248",
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer": "",
+            "BOM_Manufacturer Part": "",
+            "puuid": "9f77654394344f25b3de138e0fe05ff6",
+            "uuid": "a68dc5e6a9944c46b7604648a43dcd65"
+          }
+        ],
+        [
+          "HDR-M-2.54_1x2",
+          12,
+          "HDR-M-2.54_1X2",
+          "J7,J8,J9,J10,J11,J12,J13,J14,J15,J16,J18,J19",
+          {
+            "BOM_Supplier Part": "C124375",
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer": "",
+            "BOM_Manufacturer Part": "",
+            "puuid": "70aa5812f21f4991bf427395d51849f4",
+            "uuid": "a9aa2b14f188405792fa87ac344499a4"
+          }
+        ],
+        [
+          "IN-12A",
+          6,
+          "IN-12",
+          "N1,N2,N3,N4,N5,N6",
+          {
+            "BOM_Manufacturer Part": "",
+            "puuid": "e6230db107234f61ab16582b21750c22",
+            "uuid": "6d2a9176194346acbd5ccafcb46952f1"
+          }
+        ]
+      ],
+      "updateTime": 1637802311,
+      "createTime": 1637792488,
+      "histories": [],
+      "created_at": "2021-11-24 20:21:28",
+      "updated_at": "2021-11-24 23:05:11"
+    },
+    {
+      "uuid": "73807edb6eb78d09419a53aa6ae35d10",
+      "puuid": "f5b833d550e151083c8da6c9d2eec31f",
+      "title": "PCB_Nixie Display Board",
+      "filename": "PCB_Nixie Display Board.json",
+      "description": "",
+      "docType": "3",
+      "master": "",
+      "thumb": "/images/thumb-default.png",
+      "components": {
+        "4dd21fdff65e48e89ebd6165b3a5cb41": 6,
+        "e6230db107234f61ab16582b21750c22": 6,
+        "9f77654394344f25b3de138e0fe05ff6": 1,
+        "70aa5812f21f4991bf427395d51849f4": 12
+      },
+      "BOM": [],
+      "updateTime": 1637899549,
+      "createTime": 1637794844,
+      "histories": [],
+      "created_at": "2021-11-24 21:00:44",
+      "updated_at": "2021-11-26 02:05:49"
+    }
+  ],
+  "sort": [],
+  "title": "Nixie Display Board",
+  "foldername": "Nixie Display Board",
+  "schfilename": "Nixie Display Board.json",
+  "schfilemtime": 1637802311035
+}

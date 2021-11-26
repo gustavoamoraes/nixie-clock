@@ -1,0 +1,287 @@
+{
+  "uuid": "0106a5ca04b987084975077c1faaf41d",
+  "path": "Offline/Nixie%20Clock%20Power%20Supply",
+  "name": "Nixie Clock Power Supply",
+  "content": "",
+  "created_at": "2021-07-05 21:39:12",
+  "updated_at": "2021-11-25 23:40:44",
+  "stick": "",
+  "documents": [
+    {
+      "uuid": "2b8a2ed3ef474afd9c94658f8e4740f8",
+      "title": "Sheet_1",
+      "description": "",
+      "docType": "1",
+      "master": "",
+      "thumb": "/images/thumb-default.png",
+      "components": {
+        "33ed3d4caa744ff6acb3e7ac000c3f19": 1,
+        "dbfa7da092bc44faa13a86aaa683160b": 1,
+        "2fe5a87765ae4c3f93002d61fc568f7b": 1,
+        "ba5b84518e194ef080c8e95c2028f206": 1,
+        "303c93b5c0b24ce9aa97a86af1f53341": 1,
+        "05fe9f63574b43759a4ead9852c5f589": 1,
+        "6004427743dbdd555d6b794af143fe13": 1,
+        "d06fd183e0b742e191bf48a41812063c": 1,
+        "a2ea98d9f46f490c82ff5140cbb3c89e": 1,
+        "d1967012734640e5b2f2cc1ea764740b": 5,
+        "f5b93992194348a28f6e676d0790122a": 2
+      },
+      "BOM": [
+        [
+          "Value",
+          "Quantity",
+          "Package",
+          "Components",
+          "CustomPara"
+        ],
+        [
+          "100uF",
+          1,
+          "CAP-D5.0×F2.0",
+          "C1",
+          {
+            "BOM_Supplier Part": "",
+            "BOM_Supplier": "",
+            "BOM_Manufacturer Part": "",
+            "puuid": "9ab4ba27487f4e968ec8c676394520e2",
+            "uuid": "d06fd183e0b742e191bf48a41812063c"
+          }
+        ],
+        [
+          "100uF",
+          1,
+          "CAP-D12.5×F5.0",
+          "C2",
+          {
+            "BOM_Supplier Part": "",
+            "BOM_Supplier": "",
+            "BOM_Manufacturer Part": "",
+            "puuid": "4cabd9c15bac456496d09a33b7c9d398",
+            "uuid": "a2ea98d9f46f490c82ff5140cbb3c89e"
+          }
+        ],
+        [
+          "2.2NF",
+          1,
+          "RAD-0.1",
+          "C3",
+          {
+            "BOM_Supplier Part": "",
+            "BOM_Supplier": "",
+            "BOM_Manufacturer Part": "",
+            "puuid": "ea82fbe34d7840de9fdcf3145ab199ef",
+            "uuid": "dbfa7da092bc44faa13a86aaa683160b"
+          }
+        ],
+        [
+          "1N4148",
+          1,
+          "DO-35_BD2.0-L4.0-P8.00-D0.5-FD",
+          "D1",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer Part": "1N4148",
+            "BOM_Manufacturer": "SEMTECH",
+            "BOM_Supplier Part": "C14516",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "07f65a035ec440c9ba8d8743498f47ca",
+            "uuid": "6004427743dbdd555d6b794af143fe13"
+          }
+        ],
+        [
+          "UF4007_C84067",
+          1,
+          "DO-41_BD2.4-L4.7-P8.70-D0.9-FD",
+          "D3",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer": "STARSEA",
+            "BOM_Manufacturer Part": "UF4007",
+            "BOM_Supplier Part": "C84067",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "f9b6c4acbda64b569861a21e133c291c",
+            "uuid": "05fe9f63574b43759a4ead9852c5f589"
+          }
+        ],
+        [
+          "200uH",
+          1,
+          "L_AXIAL-0.6",
+          "L1",
+          {
+            "BOM_Supplier Part": "",
+            "BOM_Supplier": "",
+            "BOM_Manufacturer Part": "",
+            "puuid": "61cccdc8b5014f5786200c9b3d832328",
+            "uuid": "2fe5a87765ae4c3f93002d61fc568f7b"
+          }
+        ],
+        [
+          "MPSA92",
+          1,
+          "TO-92-3_L5.1-W4.1-P1.27-L",
+          "Q1",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer": "SEMTECH",
+            "BOM_Manufacturer Part": "MPSA92",
+            "BOM_Supplier Part": "C118558",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "6a8cc0d167d04926a8ac5a757ba65780",
+            "uuid": "303c93b5c0b24ce9aa97a86af1f53341"
+          }
+        ],
+        [
+          "IRF740",
+          1,
+          "TO-220-3_L10.0-W4.5-P2.54-L",
+          "Q3",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Supplier Part": "C358408",
+            "BOM_Manufacturer": "Foshan Blue Rocket Elec",
+            "BOM_Manufacturer Part": "IRF740",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "948e610cffd14df79f04c73832b1409b",
+            "uuid": "ba5b84518e194ef080c8e95c2028f206"
+          }
+        ],
+        [
+          "0.25R",
+          1,
+          "R_AXIAL-0.4",
+          "R1",
+          {
+            "BOM_Supplier Part": "",
+            "BOM_Supplier": "",
+            "BOM_Manufacturer Part": "",
+            "puuid": "5905db98cde4487fbb177070aa85bbe1",
+            "uuid": "d1967012734640e5b2f2cc1ea764740b"
+          }
+        ],
+        [
+          "180R",
+          1,
+          "R_AXIAL-0.4",
+          "R2",
+          {
+            "BOM_Supplier Part": "",
+            "BOM_Supplier": "",
+            "BOM_Manufacturer Part": "",
+            "puuid": "5905db98cde4487fbb177070aa85bbe1",
+            "uuid": "d1967012734640e5b2f2cc1ea764740b"
+          }
+        ],
+        [
+          "150K",
+          1,
+          "R_AXIAL-0.4",
+          "R3",
+          {
+            "BOM_Supplier Part": "",
+            "BOM_Supplier": "",
+            "BOM_Manufacturer Part": "",
+            "puuid": "5905db98cde4487fbb177070aa85bbe1",
+            "uuid": "d1967012734640e5b2f2cc1ea764740b"
+          }
+        ],
+        [
+          "1k",
+          2,
+          "R_AXIAL-0.4",
+          "R4,R6",
+          {
+            "BOM_Supplier Part": "",
+            "BOM_Supplier": "",
+            "BOM_Manufacturer Part": "",
+            "puuid": "5905db98cde4487fbb177070aa85bbe1",
+            "uuid": "d1967012734640e5b2f2cc1ea764740b"
+          }
+        ],
+        [
+          "MC34063AN",
+          1,
+          "DIP-8_L9.8-W6.6-P2.54-LS7.6-BL",
+          "U1",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer": "HTC",
+            "BOM_Manufacturer Part": "MC34063AN",
+            "BOM_Supplier Part": "C126078",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "d02bd24390b14704889edf7a144138dd",
+            "uuid": "33ed3d4caa744ff6acb3e7ac000c3f19"
+          }
+        ],
+        [
+          "180V Out",
+          1,
+          "2 PIN TERMINAL",
+          "U3",
+          {
+            "BOM_Manufacturer": "",
+            "BOM_Manufacturer Part": "",
+            "BOM_Supplier Part": "",
+            "BOM_Supplier": "Wemos",
+            "puuid": "3721b60c0c02435d92c6470acf97f861",
+            "uuid": "f5b93992194348a28f6e676d0790122a"
+          }
+        ],
+        [
+          "12V In",
+          1,
+          "2 PIN TERMINAL",
+          "U4",
+          {
+            "BOM_Manufacturer": "",
+            "BOM_Manufacturer Part": "",
+            "BOM_Supplier Part": "",
+            "BOM_Supplier": "Wemos",
+            "puuid": "3721b60c0c02435d92c6470acf97f861",
+            "uuid": "f5b93992194348a28f6e676d0790122a"
+          }
+        ]
+      ],
+      "updateTime": 1629657677,
+      "createTime": 1625618647,
+      "histories": [],
+      "created_at": "2021-07-06 21:44:07",
+      "updated_at": "2021-08-22 15:41:17"
+    },
+    {
+      "uuid": "d9e92e548b134a8e874b31496ae679cd",
+      "puuid": "0106a5ca04b987084975077c1faaf41d",
+      "title": "PCB_Nixie Clock Power Supply",
+      "filename": "PCB_Nixie Clock Power Supply.json",
+      "description": "",
+      "docType": "3",
+      "master": "",
+      "thumb": "/images/thumb-default.png",
+      "components": {
+        "9ab4ba27487f4e968ec8c676394520e2": 1,
+        "4cabd9c15bac456496d09a33b7c9d398": 1,
+        "ea82fbe34d7840de9fdcf3145ab199ef": 1,
+        "07f65a035ec440c9ba8d8743498f47ca": 1,
+        "f9b6c4acbda64b569861a21e133c291c": 1,
+        "61cccdc8b5014f5786200c9b3d832328": 1,
+        "6a8cc0d167d04926a8ac5a757ba65780": 1,
+        "948e610cffd14df79f04c73832b1409b": 1,
+        "5905db98cde4487fbb177070aa85bbe1": 5,
+        "d02bd24390b14704889edf7a144138dd": 1,
+        "3721b60c0c02435d92c6470acf97f861": 2
+      },
+      "BOM": [],
+      "updateTime": 1637890844,
+      "createTime": 1629600599,
+      "histories": [],
+      "created_at": "2021-08-21 23:49:59",
+      "updated_at": "2021-11-25 23:40:44"
+    }
+  ],
+  "sort": [],
+  "title": "Nixie Clock Power Supply",
+  "foldername": "Nixie Clock Power Supply",
+  "schfilename": "Nixie Clock Power Supply.json",
+  "schfilemtime": 1629657677101
+}
