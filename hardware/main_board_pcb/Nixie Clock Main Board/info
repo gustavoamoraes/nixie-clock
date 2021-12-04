@@ -4,7 +4,7 @@
   "name": "Nixie Clock Main Board",
   "content": "",
   "created_at": "2021-07-18 22:05:41",
-  "updated_at": "2021-11-26 16:47:50",
+  "updated_at": "2021-12-01 16:08:58",
   "stick": "",
   "documents": [
     {
@@ -282,11 +282,11 @@
           }
         ]
       ],
-      "updateTime": 1637944354,
+      "updateTime": 1638378155,
       "createTime": 1626656741,
       "histories": [],
       "created_at": "2021-07-18 22:05:41",
-      "updated_at": "2021-11-26 14:32:34"
+      "updated_at": "2021-12-01 15:02:35"
     },
     {
       "uuid": "ac5dd716cf538199beb1186681e3d10a",
@@ -312,16 +312,16 @@
         "19c77e72422b43b59c26b9fa67af5de4": 1
       },
       "BOM": [],
-      "updateTime": 1637952470,
+      "updateTime": 1638382138,
       "createTime": 1637175846,
       "histories": [],
       "created_at": "2021-11-17 17:04:06",
-      "updated_at": "2021-11-26 16:47:50"
+      "updated_at": "2021-12-01 16:08:58"
     }
   ],
   "sort": [],
   "title": "Nixie Clock Main Board",
   "foldername": "Nixie Clock Main Board",
   "schfilename": "Nixie Clock Main Board.json",
-  "schfilemtime": 1637944354753
+  "schfilemtime": 1638378155490
 }

@@ -4,7 +4,7 @@
   "name": "Nixie Clock Power Supply",
   "content": "",
   "created_at": "2021-07-05 21:39:12",
-  "updated_at": "2021-11-25 23:40:44",
+  "updated_at": "2021-11-30 21:46:28",
   "stick": "",
   "documents": [
     {
@@ -272,11 +272,11 @@
         "3721b60c0c02435d92c6470acf97f861": 2
       },
       "BOM": [],
-      "updateTime": 1637890844,
+      "updateTime": 1638315988,
       "createTime": 1629600599,
       "histories": [],
       "created_at": "2021-08-21 23:49:59",
-      "updated_at": "2021-11-25 23:40:44"
+      "updated_at": "2021-11-30 21:46:28"
     }
   ],
   "sort": [],
