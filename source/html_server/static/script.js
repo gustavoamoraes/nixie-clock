@@ -15,7 +15,7 @@ const pickr = Pickr.create({
             hsva: false,
             cmyk: false,
             input: true,
-            clear: true,
+            clear: false,
             save: true
         }
     }
@@ -50,7 +50,8 @@ bg_range.on('input', function ()
     bg_range_label.text(`(${val}%)`);
 });
 
-pickr.on('save', (color) => {
+pickr.on('save', (color) => 
+{
     last_bg_color = color.toHSLA()
     bg_range.val(100).trigger("input")
 });
@@ -75,7 +76,7 @@ function on_submit ()
                     }
                 }
 
-    fetch("../apí/config", 
+    fetch("../api/config", 
     {
         method: "POST",
         headers: 

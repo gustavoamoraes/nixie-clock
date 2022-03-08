@@ -1,15 +1,15 @@
 {
-  "uuid": "3a87e1460405eb98887a8972dd72ad40",
+  "uuid": "0b3d3fa8d5f1c98748cf5aab3b308d28",
   "path": "Offline/Nixie%20Clock%20Main%20Board",
   "name": "Nixie Clock Main Board",
   "content": "",
   "created_at": "2021-07-18 22:05:41",
-  "updated_at": "2021-12-01 16:08:58",
+  "updated_at": "2022-03-06 21:46:37",
   "stick": "",
   "documents": [
     {
-      "uuid": "3d323eedff4c69fa1bd5e5c3e96f7167",
-      "title": "Sheet_1",
+      "uuid": "0ebd2ad2384b46184f30c45f530f7de5",
+      "title": "main_board_schematic",
       "description": "",
       "docType": "1",
       "master": "",
@@ -282,17 +282,17 @@
           }
         ]
       ],
-      "updateTime": 1638378155,
-      "createTime": 1626656741,
+      "updateTime": 1646592337,
+      "createTime": 1646592337,
       "histories": [],
-      "created_at": "2021-07-18 22:05:41",
-      "updated_at": "2021-12-01 15:02:35"
+      "created_at": "2022-03-06 15:45:37",
+      "updated_at": "2022-03-06 15:45:37"
     },
     {
-      "uuid": "ac5dd716cf538199beb1186681e3d10a",
+      "uuid": "ffed9982f60bccca6474f0d44ab66ccc",
       "puuid": "3a87e1460405eb98887a8972dd72ad40",
-      "title": "PCB_Nixie Clock Main Board",
-      "filename": "PCB_Nixie Clock Main Board.json",
+      "title": "main_board_pcb",
+      "filename": "main_board_pcb.json",
       "description": "",
       "docType": "3",
       "master": "",
@@ -312,16 +312,18 @@
         "19c77e72422b43b59c26b9fa67af5de4": 1
       },
       "BOM": [],
-      "updateTime": 1638382138,
+      "updateTime": 1646593646,
       "createTime": 1637175846,
       "histories": [],
       "created_at": "2021-11-17 17:04:06",
-      "updated_at": "2021-12-01 16:08:58"
+      "updated_at": "2022-03-06 16:07:26"
     }
   ],
-  "sort": [],
+  "sort": [
+    "80223609592712ad3b2ec024bf6767b0"
+  ],
   "title": "Nixie Clock Main Board",
   "foldername": "Nixie Clock Main Board",
   "schfilename": "Nixie Clock Main Board.json",
-  "schfilemtime": 1638378155490
+  "schfilemtime": 1646613988255
 }
