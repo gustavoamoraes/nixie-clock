@@ -1,5 +1,7 @@
 #pragma once
 
+#include "constants.h"
+
 class Digit 
 {
     public:
@@ -14,5 +16,5 @@ class Digit
         void setDigit(int d);
         float getDuty();
 
-        Digit () {};
+        Digit ();
 };

@@ -2,15 +2,19 @@
 
 #include "ring_module_main.h"
 
+RingModuleMain::RingModuleMain () : indexChild(nullptr)
+{
+}
+
 void RingModuleMain::update () 
 {   
-    if(indexChild->isActive)
+    if(indexChild && indexChild->isActive)
         return indexChild->update();
 }
 
 void RingModuleMain::change (int q) 
 {
-    if(indexChild->isActive)
+    if(indexChild && indexChild->isActive)
         return indexChild->change(q);
 
     childIndex = childIndex + q % childCount;
@@ -18,13 +22,13 @@ void RingModuleMain::change (int q)
 
 void RingModuleMain::back () 
 {
-    if(indexChild->isActive)
+    if(indexChild && indexChild->isActive)
         return indexChild->back();
 }
 
 void RingModuleMain::select () 
 {
-    if(indexChild->isActive)
+    if(indexChild && indexChild->isActive)
         return indexChild->select();
 
     indexChild = &childs[childIndex];
@@ -32,7 +36,7 @@ void RingModuleMain::select ()
 
 Profile* RingModuleMain::getProfile ()
 {
-    if(indexChild->isActive)
+    if(indexChild && indexChild->isActive)
         return indexChild->getProfile();
 
     return &profile;

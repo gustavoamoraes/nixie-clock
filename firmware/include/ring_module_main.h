@@ -19,5 +19,5 @@ class RingModuleMain : public RingModule
 
         Profile* getProfile();
         
-        RingModuleMain () {};
+        RingModuleMain ();
 };
