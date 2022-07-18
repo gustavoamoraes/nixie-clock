@@ -12,12 +12,12 @@ class RingModuleMain : public RingModule
         RingModule* indexChild;
         int childIndex;
 
-        void update ();
-        void change (int q);
-        void back ();
-        void select ();
+        void update () override;
+        void change (int q) override;
+        void back () override;
+        void select () override;
 
-        Profile* getProfile();
+        Profile* getProfile() override;
         
         RingModuleMain ();
 };

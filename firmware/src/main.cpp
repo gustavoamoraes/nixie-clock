@@ -6,6 +6,7 @@
 #include <WiFi.h>
 #include <iostream>
 #include "SPI.h"
+#include "Wire.h"
 
 #include "constants.h"
 #include "rotary_encoder.h"
@@ -14,6 +15,7 @@
 #include "ring_module_main.h"
 #include "profile.h"
 #include "mulitplexer.h"
+#include "globals.h"
 
 MultiplexChannel* ringChannel;
 Adafruit_NeoPixel pixels(NEO_PIXEL_COUNT, NEO_PIXELS_PIN, NEO_GRB + NEO_KHZ800);
@@ -23,29 +25,29 @@ Button backButton(13, 50, true);
 Button selectButton(13, 50, true);
 RotaryEncoder encoder(13,14);
 
+//Time
 RTC_PCF8563 rtc;
 DateTime g_Datetime;
 
-RingModuleMain mainModule;
+// RingModuleMain mainModule;
+RingModuleClock clockModule;
 
+//WiFi
 WiFiUDP udp;
 NTPClient ntpClient = NTPClient(udp);
 
-unsigned long lastTime = 0;
-int count = 0;
+SPIClass* digitsRegister = NULL;
 
-static const int spiClk = 1000000; // 1 MHz
-SPIClass * vspi = NULL;
+int lastMillis = 0;
 
 void initPins ()
 {
-  // pinMode(13, INPUT_PULLUP);
-  // pinMode(13, INPUT_PULLDOWN);
-  // pinMode(14, INPUT_PULLDOWN);
+  pinMode(DIGITS_REGISTER_CS, OUTPUT);  
+  pinMode(RTC_SQW_PIN, INPUT_PULLUP);
 }
 
-void updateGlobalDatetime (){
-  g_Datetime = rtc.now();
+void updateGlobalDatetime ()
+{
 }
 
 void setBackgroundColor (int (&bgColor) [3])
@@ -62,28 +64,15 @@ void updateDigits (Digit* nixies)
 
   for (int i = (NIXIE_COUNT - 1); i >= 0; i--)
   {
-    digitsData |= nixies[i].displayDigit << (i * 4);
+    digitsData |= nixies[i].getDigit() << (i * 4);
     ledcWrite(i, nixies[i].getDuty() * PWM_MAX_VALUE);
   }
 
-  //use it as you would the regular arduino SPI API
-  vspi->beginTransaction(SPISettings(spiClk, MSBFIRST, SPI_MODE0));
-  digitalWrite(DIGITS_REGISTER_CS, LOW); //pull SS slow to prep other end for transfer
-  vspi->transfer32(digitsData);  
-  digitalWrite(DIGITS_REGISTER_CS, HIGH); //pull ss high to signify end of data transfer
-  vspi->endTransaction();
-
-  /*vspi->beginTransaction(SPISettings(spiClk, MSBFIRST, SPI_MODE0));
-  digitalWrite(DIGITS_REGISTER_CS, LOW); //pull SS slow to prep other end for transfer
-
-  //Each nixie tube requires 4 bits 
-  for (size_t i = 0; i < NIXIE_COUNT*4/8; i++)
-  {
-    vspi->transfer(digitsData >> i*8);  
-  }
-  
+  digitsRegister->beginTransaction(SPISettings(SPI_CLK_1MHZ, MSBFIRST, SPI_MODE0));
+  digitalWrite(DIGITS_REGISTER_CS, LOW);
+  digitsRegister->transfer32(digitsData);  
   digitalWrite(DIGITS_REGISTER_CS, HIGH);
-  vspi->endTransaction();*/
+  digitsRegister->endTransaction();
 }
 
 void updateRingColors(RgbLed* ledRing)
@@ -105,18 +94,18 @@ void applyProfile(Profile* profile)
   updateDigits(profile->nixies);
 }
 
-// void wifiConnect()
-// {
-//   WiFi.mode(WIFI_STA);
-//   // WiFi.begin(MY_WiFi_SSID, MY_WiFi_PASSWORD);
+void wifiConnect()
+{
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(WiFi_SSID, WiFi_PASSWORD);
 
-//   while (WiFi.status() != WL_CONNECTED) 
-//   {
-//     delay(2);
-//   }
-// }
+  while (WiFi.status() != WL_CONNECTED) 
+  {
+    delay(2);
+  }
+}
 
-void setTimeByNTP (RTC_PCF8563& rtc)
+void setTimeByNTP ()
 {
   ntpClient.update();
   uint32_t epochTime = ntpClient.getEpochTime();
@@ -124,47 +113,54 @@ void setTimeByNTP (RTC_PCF8563& rtc)
   rtc.adjust(now);
 }
 
-void setup() {
-
+void setup() 
+{
   // Serial.begin(115200);
+  initPins ();
 
-  // initPins ();
+  // attachInterrupt(digitalPinToInterrupt(RTC_SQW_PIN), updateGlobalDatetime, RISING );
 
-  // rtc.writeSqwPinMode(Pcf8563SqwPinMode::PCF8563_SquareWave1Hz);
-  // attachInterrupt(digitalPinToInterrupt(RTC_SQW_PIN), &updateGlobalDatetime, RISING);
+  TwoWire* twoWire = new TwoWire(1);
+  twoWire->begin(26,25,100000);
 
-  // ringChannel = multiplexChannelFactory(10, 3);
-  //SPI.setClockDivider(SPI_CLOCK_DIV128);
+  if(!rtc.begin(twoWire))
+  {
+    // Serial.println("RTC didnt begin");
+  }
 
-  vspi = new SPIClass(VSPI);
-  vspi->begin(DIGITS_REGISTER_CLK, -1, DIGITS_REGISTER_DATA, DIGITS_REGISTER_CS);
-
-  pinMode(DIGITS_REGISTER_CS, OUTPUT);  
+  rtc.start();
+  //rtc.writeSqwPinMode(Pcf8563SqwPinMode::PCF8563_SquareWave1Hz);
+  
+  digitsRegister = new SPIClass(VSPI);
+  digitsRegister->begin(DIGITS_REGISTER_CLK, -1, DIGITS_REGISTER_DATA, DIGITS_REGISTER_CS);
   digitalWrite(DIGITS_REGISTER_CS, HIGH);  
 
   for (size_t i = 0; i < NIXIE_COUNT; i++)
   {
     ledcSetup(i, PWM_FREQUENCY, PWM_RESOLUTION);
     ledcAttachPin(NIXIE_PINS[i], i);
-    mainModule.profile.nixies[i].setDigit(i);
+    clockModule.profile.nixies[i].setDigit(0);
   }
+
+  //Set all zeros
+  applyProfile(&clockModule.profile);
+
+  wifiConnect();
+  setTimeByNTP();
+
+  int a[3] {255, 0, 255};
+  setBackgroundColor(a);
+  // ringChannel = multiplexChannelFactory(10, 3);
 }
 
 void loop()
 {
-  uint32_t diff = millis() - lastTime;
-
-  if( diff > 1000)
+  if(millis() - lastMillis > 1000)
   {
-    for (size_t i = 0; i < NIXIE_COUNT; i++)
-    {
-      mainModule.profile.nixies[i].setDigit((count + i) % 10); 
-    }
-
-    count++;
-
-    lastTime = millis();
+    g_Datetime = rtc.now();
+    lastMillis = millis();
   }
+
 
   /* if(backButton.wasPressed())
     mainModule.back();
@@ -176,5 +172,7 @@ void loop()
   if(dir != 0) mainModule.change(dir); */
 
   //mainModule.update();
-  applyProfile(mainModule.getProfile());
+  // applyProfile(mainModule.getProfile());
+  clockModule.update();
+  applyProfile(clockModule.getProfile());
 } 

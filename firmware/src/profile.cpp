@@ -1,14 +1,10 @@
 #include <Arduino.h>
 #include "profile.h"
 
-int Profile::setDigits (const char* digits)
+void Profile::setDigits (const int new_digits[NIXIE_COUNT])
 {
-  for (size_t i = 0; digits[i] != '\0'; i++)
+  for (size_t i = 0; i < NIXIE_COUNT; i++)
   {
-    int digit = digits[i] - '0';
-    if (digit > 9 || digit < 0) //Not a number
-      return 0; 
-    nixies[i].displayDigit = digit;
+    nixies[i].setDigit(new_digits[i]);
   }
-  return 1;
 }

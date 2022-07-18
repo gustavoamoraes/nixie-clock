@@ -9,12 +9,12 @@ class RingModule
         bool isActive;
         Profile profile;
 
-        void update () {};
-        void change (int q) {};
-        void back () {};
-        void select () {};
+        virtual void update () {};
+        virtual void change (int q) {};
+        virtual void back () {};
+        virtual void select () {};
 
-        Profile* getProfile() { return &profile; };
+        virtual Profile* getProfile() { return &profile; };
 
         RingModule () {};
 };

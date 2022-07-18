@@ -9,12 +9,15 @@ class Digit
         enum TimingFunction { Constant, Ocilating };
         TimingFunction timeFunction;
 
-        float baseDuty;
-        int displayDigit;
-
         void setDuty(float t, TimingFunction type);
         void setDigit(int d);
+        
+        int getDigit() { return displayDigit; }
         float getDuty();
 
         Digit ();
+
+    private:
+        float baseDuty;
+        int displayDigit;
 };

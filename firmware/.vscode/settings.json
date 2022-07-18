@@ -41,6 +41,8 @@
         "utility": "cpp",
         "typeinfo": "cpp",
         "inttypes.h": "c",
-        "string": "cpp"
+        "string": "cpp",
+        "iostream": "cpp",
+        "random": "cpp"
     }
 }

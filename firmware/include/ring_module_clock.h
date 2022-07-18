@@ -1,17 +1,18 @@
 #pragma once
 
+#include <RTClib.h>
 #include "ring_module_base.h"
 
 class RingModuleClock : public RingModule
 {
     public:
-    
-        int test;
-
-        void update ();
-        void change (int q);
-        void back ();
-        void select ();
+        void update () override;
+        void change (int q) override {};
+        void back () override { isActive = false; };
+        void select () override {};
 
         RingModuleClock () {};
+
+    private:
+        DateTime datetime;
 };

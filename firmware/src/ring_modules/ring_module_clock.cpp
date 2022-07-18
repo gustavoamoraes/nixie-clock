@@ -1,24 +1,13 @@
 #include <Arduino.h>
 
 #include "ring_module_clock.h"
+#include "globals.h"
 
 void RingModuleClock::update () 
 {
-    profile.setDigits("123456 c");
-}
-
-void RingModuleClock::change (int q) 
-{
-    test += q;
-    Serial.print(test);
-}
-
-void RingModuleClock::back () 
-{
-    isActive = false;
-}
-
-void RingModuleClock::select () 
-{
-    Serial.print("select from clock");
+    int time[NIXIE_COUNT] {
+    g_Datetime.hour()/10, g_Datetime.hour()%10,
+    g_Datetime.minute()/10, g_Datetime.minute()%10,
+    g_Datetime.second()/10, g_Datetime.second()%10};
+    profile.setDigits(time);
 }

@@ -1,0 +1,43 @@
+{
+  "path": "Offline/power%20supply",
+  "foldername": "power supply",
+  "name": "power supply",
+  "title": "power supply",
+  "uuid": "3318c0a9735c387feac99aae02980ba1",
+  "created_at": "2022-06-25 16:23:57",
+  "updated_at": "2022-06-25 16:23:57",
+  "documents": [
+    {
+      "uuid": "d633616dc7103dd7f1b2ca5ad743d246",
+      "title": "power_supply_schematic",
+      "description": "",
+      "docType": "1",
+      "master": "",
+      "thumb": "/images/thumb-default.png",
+      "updateTime": 1656140098,
+      "createTime": 1656140098,
+      "histories": [],
+      "created_at": "2022-06-25 03:54:58",
+      "updated_at": "2022-06-25 03:54:58"
+    },
+    {
+      "uuid": "5674a18f70de477af376a7145a9a3178",
+      "title": "power_supply",
+      "filename": "power_supply.json",
+      "description": "",
+      "docType": "3",
+      "master": "",
+      "thumb": "/images/thumb-default.png",
+      "updateTime": 1656134542,
+      "createTime": 1656134542,
+      "histories": [],
+      "created_at": "2022-06-25 02:22:22",
+      "updated_at": "2022-06-25 02:22:22"
+    }
+  ],
+  "content": "",
+  "stick": "",
+  "sort": [],
+  "schfilename": "power_supply_pcb.json",
+  "schfilemtime": 1656140098737.0193
+}

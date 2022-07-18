@@ -8,5 +8,5 @@ struct Profile
 {
     Digit nixies[NIXIE_COUNT];
     RgbLed ledRing[LED_RING_COUNT];
-    int setDigits (const char* digits);
+    void setDigits (const int digits[NIXIE_COUNT]);
 };

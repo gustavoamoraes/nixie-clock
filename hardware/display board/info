@@ -1,0 +1,252 @@
+{
+  "uuid": "a2779acb1a6f4852be003d5a6b9bc04c",
+  "path": "Offline/display%20board",
+  "name": "display board",
+  "content": "",
+  "created_at": "2022-07-17 20:35:50",
+  "updated_at": "2022-07-18 13:28:01",
+  "stick": "",
+  "documents": [
+    {
+      "uuid": "844b491101adb2c9592555bd1cb52560",
+      "title": "display_board_schematic",
+      "description": "",
+      "docType": "1",
+      "master": "",
+      "thumb": "/images/thumb-default.png",
+      "components": {
+        "a9aa2b14f188405792fa87ac344499a4": 13,
+        "4fe57598a476462cae435c5b8cd285d7": 6,
+        "6d2a9176194346acbd5ccafcb46952f1": 6,
+        "0247ded5875b44b093aecd7e518b10fc": 3,
+        "5d56951fd43d4b5083b0f3cd9bfd5587": 24,
+        "303c93b5c0b24ce9aa97a86af1f53341": 6,
+        "388cc20a13c44f31a28028869a262f88": 6,
+        "a052559478a14ee2b9e3514bee4ff72d": 1,
+        "93b44d62463c4c9c82dd7108c8ee7d73": 1,
+        "a68dc5e6a9944c46b7604648a43dcd65": 1
+      },
+      "BOM": [
+        [
+          "Value",
+          "Quantity",
+          "Package",
+          "Components",
+          "CustomPara"
+        ],
+        [
+          "HDR-M-2.54_1x3",
+          1,
+          "HDR-M-2.54_1X3",
+          "J1",
+          {
+            "BOM_Supplier Part": "C180248",
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer": "",
+            "BOM_Manufacturer Part": "",
+            "puuid": "9f77654394344f25b3de138e0fe05ff6",
+            "uuid": "a68dc5e6a9944c46b7604648a43dcd65"
+          }
+        ],
+        [
+          "HDR-M-2.54_1x2",
+          13,
+          "HDR-M-2.54_1X2",
+          "J2,J3,J4,J5,J6,J7,J8,J9,J10,J11,J12,J13,NIXIES",
+          {
+            "BOM_Supplier Part": "C124375",
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer": "",
+            "BOM_Manufacturer Part": "",
+            "puuid": "70aa5812f21f4991bf427395d51849f4",
+            "uuid": "a9aa2b14f188405792fa87ac344499a4"
+          }
+        ],
+        [
+          "IN-12A",
+          6,
+          "IN-12",
+          "N1,N2,N3,N4,N5,N6",
+          {
+            "BOM_Manufacturer Part": "",
+            "puuid": "e6230db107234f61ab16582b21750c22",
+            "uuid": "6d2a9176194346acbd5ccafcb46952f1"
+          }
+        ],
+        [
+          "HDR-M-2.54_1x6",
+          1,
+          "HDR-M-2.54_1X6",
+          "PWM",
+          {
+            "BOM_Supplier Part": "C190819",
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer": "",
+            "BOM_Manufacturer Part": "",
+            "puuid": "df3ca37cb13d499cb713e9aa6fdd0c7b",
+            "uuid": "93b44d62463c4c9c82dd7108c8ee7d73"
+          }
+        ],
+        [
+          "MPSA92",
+          6,
+          "TO-92-3_L5.1-W4.1-P1.27-L",
+          "Q1,Q4,Q5,Q8,Q9,Q12",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer": "SEMTECH",
+            "BOM_Manufacturer Part": "MPSA92",
+            "BOM_Supplier Part": "C118558",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "6a8cc0d167d04926a8ac5a757ba65780",
+            "uuid": "303c93b5c0b24ce9aa97a86af1f53341"
+          }
+        ],
+        [
+          "MPSA42",
+          6,
+          "TO-92-3_L4.9-W3.7-P1.27-L",
+          "Q2,Q3,Q6,Q7,Q10,Q11",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer": "SEMTECH",
+            "BOM_Manufacturer Part": "MPSA42",
+            "BOM_Supplier Part": "C118557",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "6924b36489de4921bb29ca14bf27c33f",
+            "uuid": "388cc20a13c44f31a28028869a262f88"
+          }
+        ],
+        [
+          "720k",
+          6,
+          "R_AXIAL-0.3",
+          "R1,R6,R9,R14,R17,R22",
+          {
+            "BOM_Supplier Part": "",
+            "BOM_Supplier": "",
+            "BOM_Manufacturer Part": "",
+            "puuid": "3eb1249f3ebb4284ae221b0379016582",
+            "uuid": "5d56951fd43d4b5083b0f3cd9bfd5587"
+          }
+        ],
+        [
+          "20k",
+          6,
+          "R_AXIAL-0.3",
+          "R2,R5,R10,R13,R18,R21",
+          {
+            "BOM_Supplier Part": "",
+            "BOM_Supplier": "",
+            "BOM_Manufacturer Part": "",
+            "puuid": "3eb1249f3ebb4284ae221b0379016582",
+            "uuid": "5d56951fd43d4b5083b0f3cd9bfd5587"
+          }
+        ],
+        [
+          "10k",
+          6,
+          "R_AXIAL-0.3",
+          "R3,R7,R11,R15,R19,R23",
+          {
+            "BOM_Supplier Part": "",
+            "BOM_Supplier": "",
+            "BOM_Manufacturer Part": "",
+            "puuid": "3eb1249f3ebb4284ae221b0379016582",
+            "uuid": "5d56951fd43d4b5083b0f3cd9bfd5587"
+          }
+        ],
+        [
+          "100k",
+          6,
+          "R_AXIAL-0.3",
+          "R4,R8,R12,R16,R20,R24",
+          {
+            "BOM_Supplier Part": "",
+            "BOM_Supplier": "",
+            "BOM_Manufacturer Part": "",
+            "puuid": "3eb1249f3ebb4284ae221b0379016582",
+            "uuid": "5d56951fd43d4b5083b0f3cd9bfd5587"
+          }
+        ],
+        [
+          "74HC595",
+          3,
+          "DIP-16",
+          "SHIFT1,SHIFT2,SHIFT3",
+          {
+            "BOM_Manufacturer": "",
+            "BOM_Manufacturer Part": "",
+            "BOM_Supplier Part": "",
+            "BOM_Supplier": "",
+            "puuid": "9be6a3ee7f2942b89a2de2d648fe06c4",
+            "uuid": "0247ded5875b44b093aecd7e518b10fc"
+          }
+        ],
+        [
+          "HDR-M-2.54_1x5",
+          1,
+          "HDR-M-2.54_1X5",
+          "SPI",
+          {
+            "BOM_Supplier Part": "C358687",
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer": "",
+            "BOM_Manufacturer Part": "",
+            "puuid": "108969f8d9834a9ea23bcec2d43a66e4",
+            "uuid": "a052559478a14ee2b9e3514bee4ff72d"
+          }
+        ],
+        [
+          "K155ID1/SN74141",
+          6,
+          "DIP16",
+          "U1,U2,U3,U4,U5,U6",
+          {
+            "BOM_Manufacturer Part": "",
+            "puuid": "36387ea742a04602bc24d100c866268f",
+            "uuid": "4fe57598a476462cae435c5b8cd285d7"
+          }
+        ]
+      ],
+      "updateTime": 1658161451,
+      "createTime": 1658100973,
+      "histories": [],
+      "created_at": "2022-07-17 20:36:13",
+      "updated_at": "2022-07-18 13:24:11"
+    },
+    {
+      "uuid": "6458cf5be8bbe0d428c91008ce50c744",
+      "puuid": "a2779acb1a6f4852be003d5a6b9bc04c",
+      "title": "display_board_pcb",
+      "filename": "display_board_pcb.json",
+      "description": "",
+      "docType": "3",
+      "master": "",
+      "thumb": "/images/thumb-default.png",
+      "components": {
+        "9f77654394344f25b3de138e0fe05ff6": 1,
+        "9be6a3ee7f2942b89a2de2d648fe06c4": 3,
+        "108969f8d9834a9ea23bcec2d43a66e4": 1,
+        "6a8cc0d167d04926a8ac5a757ba65780": 6,
+        "3eb1249f3ebb4284ae221b0379016582": 24,
+        "36387ea742a04602bc24d100c866268f": 6,
+        "6924b36489de4921bb29ca14bf27c33f": 6,
+        "df3ca37cb13d499cb713e9aa6fdd0c7b": 1,
+        "70aa5812f21f4991bf427395d51849f4": 13,
+        "e6230db107234f61ab16582b21750c22": 6
+      },
+      "BOM": [],
+      "updateTime": 1658161681,
+      "createTime": 1658100950,
+      "histories": [],
+      "created_at": "2022-07-17 20:35:50",
+      "updated_at": "2022-07-18 13:28:01"
+    }
+  ],
+  "sort": [],
+  "title": "display board",
+  "foldername": "display board",
+  "schfilename": "display board.json",
+  "schfilemtime": 1658161451072
+}

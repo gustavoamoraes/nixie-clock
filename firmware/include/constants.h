@@ -5,11 +5,12 @@
 #define PWM_MAX_VALUE (1 << PWM_RESOLUTION)
 
 #define NEO_PIXEL_COUNT 6
-#define NEO_PIXELS_PIN 99
+#define NEO_PIXELS_PIN 32
 
 #define DIGITS_REGISTER_CS 5
 #define DIGITS_REGISTER_CLK 18
 #define DIGITS_REGISTER_DATA 23
+#define SPI_CLK_1MHZ 1000000
 
 //Shift Register Multiplexer
 #define MULTIPLEXER_DATA 13
@@ -20,8 +21,10 @@
 #define OCILATING_PERIOD 1/2
 #define LED_RING_COUNT 12
 #define NIXIE_COUNT 6
-#define RTC_SQW_PIN 99
+#define RTC_SQW_PIN 33
 
+#define WiFi_SSID "AUREO"
+#define WiFi_PASSWORD "BananaCanela"
 //WiFi
 // const char *MY_WiFi_SSID = "AUREO";
 // const char *MY_WiFi_PASSWORD = "BananaCanela";
