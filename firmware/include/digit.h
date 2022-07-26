@@ -5,19 +5,17 @@
 class Digit 
 {
     public:
-
         enum TimingFunction { Constant, Ocilating };
         TimingFunction timeFunction;
 
-        void setDuty(float t, TimingFunction type);
+        void setTimeFunction(TimingFunction type);
         void setDigit(int d);
         
         int getDigit() { return displayDigit; }
         float getDuty();
 
-        Digit ();
+        Digit () {};
 
     private:
-        float baseDuty;
         int displayDigit;
 };

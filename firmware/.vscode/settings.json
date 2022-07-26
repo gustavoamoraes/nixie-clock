@@ -43,6 +43,7 @@
         "inttypes.h": "c",
         "string": "cpp",
         "iostream": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "string_view": "cpp"
     }
 }

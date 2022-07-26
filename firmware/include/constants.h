@@ -21,10 +21,12 @@
 #define OCILATING_PERIOD 1/2
 #define LED_RING_COUNT 12
 #define NIXIE_COUNT 6
-#define RTC_SQW_PIN 33
+#define RTC_SQW_PIN 35
 
 #define WiFi_SSID "AUREO"
 #define WiFi_PASSWORD "BananaCanela"
+
+#define CONFIG_FILE_PATH "config.json"
 //WiFi
 // const char *MY_WiFi_SSID = "AUREO";
 // const char *MY_WiFi_PASSWORD = "BananaCanela";

@@ -1,5 +1,12 @@
 #pragma once
 
 #include "RTClib.h"
+#include "digit.h"
+#include "rgbled.h"
+#include "config.h"
+#include "constants.h"
 
-extern DateTime g_Datetime;
+extern DateTime globalDatetime;
+extern Config globalConfig;
+
+void setConfig(Config& newConfig);

@@ -14,5 +14,5 @@ class RingModuleClock : public RingModule
         RingModuleClock () {};
 
     private:
-        DateTime datetime;
+        DateTime m_Datetime;
 };

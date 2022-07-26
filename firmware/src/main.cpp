@@ -7,6 +7,7 @@
 #include <iostream>
 #include "SPI.h"
 #include "Wire.h"
+#include "SPIFFS.h"
 
 #include "constants.h"
 #include "rotary_encoder.h"
@@ -16,7 +17,9 @@
 #include "profile.h"
 #include "mulitplexer.h"
 #include "globals.h"
+#include "config.h"
 
+//
 MultiplexChannel* ringChannel;
 Adafruit_NeoPixel pixels(NEO_PIXEL_COUNT, NEO_PIXELS_PIN, NEO_GRB + NEO_KHZ800);
 
@@ -26,8 +29,8 @@ Button selectButton(13, 50, true);
 RotaryEncoder encoder(13,14);
 
 //Time
-RTC_PCF8563 rtc;
-DateTime g_Datetime;
+RTC_DS3231 rtc;
+DateTime globalDatetime;
 
 // RingModuleMain mainModule;
 RingModuleClock clockModule;
@@ -38,16 +41,26 @@ NTPClient ntpClient = NTPClient(udp);
 
 SPIClass* digitsRegister = NULL;
 
+Config globalConfig;
+
 int lastMillis = 0;
+bool canUpdateGlobalTime;
 
 void initPins ()
 {
   pinMode(DIGITS_REGISTER_CS, OUTPUT);  
-  pinMode(RTC_SQW_PIN, INPUT_PULLUP);
+  pinMode(RTC_SQW_PIN, INPUT);
 }
 
 void updateGlobalDatetime ()
 {
+  canUpdateGlobalTime = true;
+}
+
+void setConfig(Config& newConfig)
+{
+  setBackgroundColor(newConfig.bgColor);
+  globalConfig = newConfig;
 }
 
 void setBackgroundColor (int (&bgColor) [3])
@@ -58,7 +71,7 @@ void setBackgroundColor (int (&bgColor) [3])
   }
 }
 
-void updateDigits (Digit* nixies)
+void updateDigits (Digit (&nixies)[NIXIE_COUNT])
 {
   unsigned long digitsData = 0;
 
@@ -75,23 +88,17 @@ void updateDigits (Digit* nixies)
   digitsRegister->endTransaction();
 }
 
-void updateRingColors(RgbLed* ledRing)
+void updateRingColors(RgbLed (&leds)[LED_RING_COUNT])
 {
   for (size_t i = 0; i < LED_RING_COUNT; i++)
   {
     for (size_t j = 0; j < 3; j++)
     {
       int colorOut[3] ;
-      ledRing[i].getColor(colorOut);
+      leds[i].getColor(colorOut);
       ringChannel->values[i+j] = colorOut[j];
     }
   }
-}
-
-void applyProfile(Profile* profile)
-{
-  //updateRingColors(profile->ledRing);
-  updateDigits(profile->nixies);
 }
 
 void wifiConnect()
@@ -113,40 +120,56 @@ void setTimeByNTP ()
   rtc.adjust(now);
 }
 
-void setup() 
+void applyProfile (Profile* profile)
 {
-  // Serial.begin(115200);
-  initPins ();
+  updateDigits(profile->nixies);
+}
 
-  // attachInterrupt(digitalPinToInterrupt(RTC_SQW_PIN), updateGlobalDatetime, RISING );
+void loadConfigFile()
+{
+  File file = SPIFFS.open(CONFIG_FILE_PATH, "r");
+  Config savedConfig;
 
-  TwoWire* twoWire = new TwoWire(1);
-  twoWire->begin(26,25,100000);
-
-  if(!rtc.begin(twoWire))
+  //If file exists
+  if(file || !file.isDirectory())
   {
-    // Serial.println("RTC didnt begin");
+    String data = file.readString();
+    configFromJson(data, savedConfig);
   }
 
-  rtc.start();
-  //rtc.writeSqwPinMode(Pcf8563SqwPinMode::PCF8563_SquareWave1Hz);
-  
+  setConfig(savedConfig);
+  file.close();
+}
+
+void setup() 
+{
+  //Serial.begin(115200);
+  initPins ();
+
   digitsRegister = new SPIClass(VSPI);
   digitsRegister->begin(DIGITS_REGISTER_CLK, -1, DIGITS_REGISTER_DATA, DIGITS_REGISTER_CS);
-  digitalWrite(DIGITS_REGISTER_CS, HIGH);  
+  digitalWrite(DIGITS_REGISTER_CS, HIGH);
 
   for (size_t i = 0; i < NIXIE_COUNT; i++)
   {
     ledcSetup(i, PWM_FREQUENCY, PWM_RESOLUTION);
     ledcAttachPin(NIXIE_PINS[i], i);
     clockModule.profile.nixies[i].setDigit(0);
-  }
+  }  
 
   //Set all zeros
-  applyProfile(&clockModule.profile);
+
+  TwoWire* twoWire = new TwoWire(1);
+  twoWire->begin(26,25,100000);
+
+  if(!rtc.begin(twoWire)) {}
 
   wifiConnect();
   setTimeByNTP();
+
+  rtc.disable32K();
+  rtc.writeSqwPinMode(Ds3231SqwPinMode::DS3231_SquareWave1Hz);
+  attachInterrupt(digitalPinToInterrupt(RTC_SQW_PIN), updateGlobalDatetime, FALLING );
 
   int a[3] {255, 0, 255};
   setBackgroundColor(a);
@@ -155,13 +178,11 @@ void setup()
 
 void loop()
 {
-  if(millis() - lastMillis > 1000)
+  if( canUpdateGlobalTime)
   {
-    g_Datetime = rtc.now();
-    lastMillis = millis();
+    globalDatetime = rtc.now();
+    canUpdateGlobalTime = false;
   }
-
-
   /* if(backButton.wasPressed())
     mainModule.back();
 
