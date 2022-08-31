@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <inttypes.h>
 #include <string.h>
+#include <esp_task_wdt.h>
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -56,7 +57,7 @@ void loop_task(void* pvParameters)
                 }
 
                 //If the channel x size is 1, it is just pwm.
-                if (channel->sizeX > 1)
+                //if (channel->sizeX > 1)
                     // Turn on current bit. Using common cathode rgb leds, so on = 0.
                     clear_bit(&states, channel->offset + channel->sizeY + x);
 
@@ -67,7 +68,7 @@ void loop_task(void* pvParameters)
     }
 }
 
-void multiplexer_init(MultiplexChannel** channels, size_t* channel_count, size_t* len)
+void multiplexer_init(MultiplexChannel** channels, size_t channel_count, size_t len)
 {
     esp_err_t ret;
     spi_device_handle_t spi;
@@ -75,19 +76,19 @@ void multiplexer_init(MultiplexChannel** channels, size_t* channel_count, size_t
     spi_bus_config_t buscfg = 
     {
         .mosi_io_num = MULTIPLEXER_DATA,
-        .sclk_io_num = MULTIPLEXER_CLK,
         .miso_io_num = -1,
+        .sclk_io_num = MULTIPLEXER_CLK,
         .quadwp_io_num = -1,
         .quadhd_io_num = -1,
     };
 
     spi_device_interface_config_t devcfg = 
     {
-        .flags = SPI_DEVICE_NO_DUMMY,
+        .mode = 0,
         .clock_speed_hz = SPI_MASTER_FREQ_80M,
         .spics_io_num = MULTIPLEXER_CS,
+        .flags = SPI_DEVICE_NO_DUMMY,
         .queue_size = 8,
-        .mode = 0,
     };
 
     //Initialize the SPI bus
@@ -98,20 +99,34 @@ void multiplexer_init(MultiplexChannel** channels, size_t* channel_count, size_t
     ret = spi_bus_add_device(HSPI_HOST, &devcfg, &spi);
     ESP_ERROR_CHECK(ret);
 
-    loop_task_args* args = malloc(sizeof(loop_task_args));
+    loop_task_args* args = (loop_task_args*) malloc(sizeof(loop_task_args));
 
     args->channels = channels;
-    args->channel_count = *channel_count;
-    args->len = *len;
+    args->channel_count = channel_count;
+    args->len = len;
     args->spi = spi;
 
     //Create task
-    xTaskCreate(
+    xTaskCreatePinnedToCore(
         loop_task,  
         "loop task",  
         1024 * 2,           
         (void*) args,            
         1,               
-        &loop_task_handle
+        &loop_task_handle,
+        1
     );
+}
+
+MultiplexChannel* multiplexChannelFactory (size_t x, size_t y)
+{
+    size_t membersSize = sizeof(MultiplexChannel);
+    MultiplexChannel* channel = (MultiplexChannel*) malloc(membersSize);
+    
+    channel->sizeX = x;
+    channel->sizeY = y;
+    channel->offset = 0;
+
+    channel->values = (size_t*) malloc(sizeof(size_t) * x * y);
+    return channel;
 }

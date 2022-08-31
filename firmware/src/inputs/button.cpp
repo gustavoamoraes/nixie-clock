@@ -8,7 +8,8 @@ Button::Button (int pin, int wait, bool invert)
     this->invert = invert;
 }
 
-void Button::update (){
+void Button::update ()
+{
     uint32_t ms = millis();
     changed = false;
     bool currentState = digitalRead(pin) == !invert;
@@ -26,10 +27,12 @@ void Button::update (){
     }
 }
 
-bool Button::wasPressed (){
+bool Button::wasPressed ()
+{
     return lastStableState && changed;
 }
 
-bool Button::wasRealised (){
+bool Button::wasRealised ()
+{  
     return !lastStableState && changed;
 }

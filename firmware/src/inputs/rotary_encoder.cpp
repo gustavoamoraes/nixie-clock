@@ -15,8 +15,8 @@ int RotaryEncoder::direction ()
 
     int dir = 0;
 
-    if (clkValue !=  lastClk){
-        dir = clkValue && dtValue ? 1 : -1;
+    if (clkValue != lastClk){
+        dir = clkValue == dtValue ? 1 : -1;
         lastClk = clkValue;
     }
 

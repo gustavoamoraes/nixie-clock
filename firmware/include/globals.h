@@ -9,4 +9,4 @@
 extern DateTime globalDatetime;
 extern Config globalConfig;
 
-void setConfig(Config& newConfig);
+void globalSetConfig(Config& newConfig);

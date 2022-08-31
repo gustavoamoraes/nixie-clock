@@ -1,10 +1,13 @@
 #include <ArduinoJson.h>
 #include "config.h"
 
+#include <algorithm>
+#include <iterator>
+
 template<typename T>
 bool inbounds (T a, T b, T value)
 {
-    return value >= a & value =< b;
+    return (value >= a) & (value <= b);
 }
 
 bool validateColor (int* color)
@@ -21,17 +24,29 @@ bool configFromJson(String json, Config& outputConfig)
     DynamicJsonDocument doc(1024);
     deserializeJson(doc, json);
 
+    Config configCopy = outputConfig;
+
+    //PWM
     float digitsPwm = doc["digits_brigthness"];
 
     if(inbounds<float>(0.0f, 1.0f, digitsPwm)) 
-        outputConfig.digitsPwm= digitsPwm;
+        configCopy.digitsPwm= digitsPwm;
     else return false;
 
-    int* rgb = doc["background_color"]; 
+    //Color
+    JsonArray rgb = doc["background_color"].as<JsonArray>(); 
+    int rgbInt[3] 
+    { 
+        rgb[0].as<int>(), 
+        rgb[1].as<int>(), 
+        rgb[2].as<int>() 
+    };
 
-    if(validateColor(rgb))  
-        std::copy(rgb[0], rgb[2], outputConfig.bgColor[0]);
+    if(validateColor(rgbInt))
+        memcpy(&configCopy.bgColor, rgbInt, 3*sizeof(int));
     else return false;
+
+    outputConfig = configCopy;
 
     return true;
 }

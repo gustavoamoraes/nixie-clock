@@ -38,8 +38,8 @@ function onApply ()
 
     var config_data = 
     {   
-        "background_color" : {r: Math.floor(bg_color[0]), g: Math.floor(bg_color[1]), b: Math.floor(bg_color[2])},
-        "digits_brigthness" : Math.floor(nixieSlider.val())
+        "background_color" : [Math.floor(bg_color[0]), Math.floor(bg_color[1]), Math.floor(bg_color[2])],
+        "digits_brigthness" : nixieSlider.val()/100
     }
 
     fetch("/config", {

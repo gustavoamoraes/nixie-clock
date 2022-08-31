@@ -1,5 +1,12 @@
 #pragma once
 
+struct RGBColor
+{
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
+};
+
 class RgbLed 
 {
     public:
@@ -7,10 +14,10 @@ class RgbLed
         enum TimingFunction { Constant, Ocilating };
         TimingFunction timeFunction;
         
-        int color[3];
+        RGBColor color;
 
-        void setColor(int (&rgb)[3], TimingFunction type);
-        void getColor(int (&output) [3]);
+        void setColor(const RGBColor& color, TimingFunction type);
+        void getColor(RGBColor& outColor);
 
         RgbLed ();
 };

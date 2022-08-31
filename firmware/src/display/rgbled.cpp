@@ -6,20 +6,26 @@
 
 RgbLed::RgbLed () {}
 
-void RgbLed::setColor (int (&rgb)[3], TimingFunction type){   
-    memcpy(this->color, rgb, 3 * sizeof(int));
+void RgbLed::setColor (const RGBColor& newColor, TimingFunction type)
+{   
+    this->color.r = newColor.r;
+    this->color.g = newColor.g;
+    this->color.b = newColor.b;
+
     timeFunction = type;
 }
 
-void RgbLed::getColor (int (&output) [3] )
+void RgbLed::getColor (RGBColor& outColor)
 {
-    memcpy(this->color, output, 3 * sizeof(int));
+    outColor.r = this->color.r;
+    outColor.g = this->color.g;
+    outColor.b = this->color.b;
 
     if (timeFunction == TimingFunction::Ocilating){
         float t = (std::cos(PI * 2 * (millis()/1000.0f * OCILATING_PERIOD)) + 1) / 2;
 
-        for (size_t i = 0; i < 3; i++){
-            output[i] *= t;
-        }
+        outColor.r *= t;
+        outColor.g *= t;
+        outColor.b *= t;
     }
 }

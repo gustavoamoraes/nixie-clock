@@ -5,6 +5,10 @@
 #include "config.h"
 #include "web.h"
 
+//Network
+const String static_files_path = "/static/";
+WebServer server(80);
+
 //MIME Types
 String getMIMEType(String filename) 
 {
@@ -29,12 +33,8 @@ String getMIMEType(String filename)
   return "text/plain";
 }
 
-//Network
-const String static_files_path = "/static/";
-WebServer server(80);
-
 //Streams file content
-bool handleFileRead(String path) 
+bool handleFileStream(String path) 
 {
   String contentType = getMIMEType(path);
   File file = SPIFFS.open(path, "r");
@@ -74,22 +74,27 @@ void bindAll()
     {
         String file_path = static_files_path + server.pathArg(0);
 
-        if (!handleFileRead(file_path))
+        if (!handleFileStream(file_path))
         {
           server.send(404, "text/plain", "FileNotFound");
         }
     });
 
-    //GET: Sends the whole table. POST: inserts a item on the table
-    server.on(UriBraces("/config"), []()
+    server.on("/config", HTTP_POST, []()
     {   
-        String data = server.pathArg(0);
+        String data = server.arg(0);
+
+        Serial.print(data);
+
         Config newConfig;
 
         if(configFromJson(data, newConfig))
         {
-            setConfig(newConfig);
-            writeFile(data, CONFIG_FILE_PATH);
+          globalSetConfig(newConfig);
+          writeFile(data, CONFIG_FILE_PATH);
+          server.send(200);
+        }else{
+          server.send(406);
         }
     });
 }
@@ -105,9 +110,15 @@ void serveFoverer (void* data)
 void startServer ()
 {
   bindAll();
-
   server.begin();
 
   //Start web sever thread
-  xTaskCreate(&serveFoverer, "WebServer", 10240, NULL, 0, NULL); 
+  xTaskCreatePinnedToCore(
+    &serveFoverer, 
+    "WebServer", 
+    10240, 
+    NULL, 
+    0, 
+    NULL,
+    0); 
 }
