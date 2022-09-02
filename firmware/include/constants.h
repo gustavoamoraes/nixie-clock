@@ -16,9 +16,9 @@
 #define MULTIPLEXER_DATA 13
 #define MULTIPLEXER_CLK  14
 #define MULTIPLEXER_CS   15
-#define MULTIPLEXER_COUNTER_MAX 128
+#define MULTIPLEXER_COUNTER_MAX 16
 
-#define OCILATING_PERIOD 1/2
+#define OCILATING_PERIOD 1.5f
 #define LED_RING_COUNT 10
 #define NIXIE_COUNT 6
 #define RTC_SQW_PIN 35
@@ -27,11 +27,14 @@
 #define ENCODER_DT 36
 #define ENCODER_SW 34
 
+#define BACK_BUTTON_PIN 39
+
+//WiFi
 #define WiFi_SSID "AUREO"
 #define WiFi_PASSWORD "BananaCanela"
 
+// #define STATIC_FILES_PATH = "/static/"
 #define CONFIG_FILE_PATH "/config.json"
-//WiFi
-// const char *MY_WiFi_SSID = "AUREO";
-// const char *MY_WiFi_PASSWORD = "BananaCanela";
+
 const int NIXIE_PINS[NIXIE_COUNT] = { 21, 19, 16, 17, 4, 2};
+const char STATIC_FILES_PATH[] = {"/static/"};

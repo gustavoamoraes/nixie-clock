@@ -1,5 +1,8 @@
 #pragma once
 
+#include <inttypes.h>
+#include <functional>
+
 struct RGBColor
 {
     uint8_t r;
@@ -10,14 +13,14 @@ struct RGBColor
 class RgbLed 
 {
     public:
+        void setColor(RGBColor newColor) { m_Color = newColor;};
+        void setModifier(std::function<RGBColor(RGBColor)> modifier) { m_Modifier = modifier; };
+        RGBColor getColor() { return m_Modifier != NULL ? m_Modifier(m_Color) : m_Color; };
 
-        enum TimingFunction { Constant, Ocilating };
-        TimingFunction timeFunction;
-        
-        RGBColor color;
+        RgbLed () {};
+        ~RgbLed () {};
 
-        void setColor(const RGBColor& color, TimingFunction type);
-        void getColor(RGBColor& outColor);
-
-        RgbLed ();
+    private:
+        RGBColor m_Color;
+        std::function<RGBColor(RGBColor)> m_Modifier;
 };

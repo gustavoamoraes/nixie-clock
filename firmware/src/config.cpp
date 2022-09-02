@@ -1,52 +1,116 @@
 #include <ArduinoJson.h>
-#include "config.h"
+#include "Arduino.h"
 
 #include <algorithm>
 #include <iterator>
 
+#include "SPIFFS.h"
+#include "constants.h"
+#include "rgbled.h"
+#include "config.h"
+
 template<typename T>
-bool inbounds (T a, T b, T value)
+bool inBounds (T a, T b, T value)
 {
     return (value >= a) & (value <= b);
 }
 
-bool validateColor (int* color)
-{
-    bool r = inbounds<int>(0, 255, color[0]);
-    bool g = inbounds<int>(0, 255, color[1]);
-    bool b = inbounds<int>(0, 255, color[2]);
+RGBColor validateJsonColor (JsonArray& color)
+{   
+    if (color.size() != 3)
+        throw "Color has more or less than 3 values.";
 
-    return r & g & b;
+    bool r = inBounds(0, 255, color[0].as<int>());
+    bool g = inBounds(0, 255, color[1].as<int>());
+    bool b = inBounds(0, 255, color[2].as<int>());
+
+    if (r & g & b)
+        return {color[0], color[1], color[2]};
+    else throw "Color values are out bounds.";
 }
 
-bool configFromJson(String json, Config& outputConfig)
+Config::Config (String json)
 {
-    DynamicJsonDocument doc(1024);
+    DynamicJsonDocument doc(512);
     deserializeJson(doc, json);
+    
+    if( doc.containsKey("digits_brightness"))
+    {
+        float digitsPwm = doc["digits_brightness"];
 
-    Config configCopy = outputConfig;
+        if(inBounds(0.0f, 1.0f, digitsPwm))
+            m_DigitsPwm = digitsPwm; 
+        else throw "PWM value out of bounds.";
+    }
 
-    //PWM
-    float digitsPwm = doc["digits_brigthness"];
+    if( doc.containsKey("led_ring_brightness"))
+    {
+        float ringBrightness = doc["led_ring_brightness"];
 
-    if(inbounds<float>(0.0f, 1.0f, digitsPwm)) 
-        configCopy.digitsPwm= digitsPwm;
-    else return false;
+        if(inBounds(0.0f, 1.0f, m_RingBrightness))
+            m_RingBrightness = ringBrightness; 
+        else throw "Ring brightness value out of bounds.";
+    }
 
-    //Color
-    JsonArray rgb = doc["background_color"].as<JsonArray>(); 
-    int rgbInt[3] 
-    { 
-        rgb[0].as<int>(), 
-        rgb[1].as<int>(), 
-        rgb[2].as<int>() 
-    };
+    if( doc.containsKey("to_idle"))
+        m_ToIdle = (bool) doc["to_idle"];
 
-    if(validateColor(rgbInt))
-        memcpy(&configCopy.bgColor, rgbInt, 3*sizeof(int));
-    else return false;
+    if( doc.containsKey("time_to_idle"))
+    {
+        int idleTime = doc["time_to_idle"];
 
-    outputConfig = configCopy;
+        if(idleTime > 0) 
+            m_TimeToIdle = idleTime;
+        else throw "Time to idle is negative.";
+    }
+    
+    if( doc.containsKey("background_color"))
+    {
+        JsonArray bgColorJson = doc["background_color"];
+        RGBColor bgColor = validateJsonColor(bgColorJson);
+        m_BgColor = bgColor;
+    }
+}
 
+template <typename T>
+void Config::serialize (T& output)
+{
+    DynamicJsonDocument jsonConfig(512);
+
+    jsonConfig["background_color"][0] = m_BgColor.r; 
+    jsonConfig["background_color"][1] = m_BgColor.g; 
+    jsonConfig["background_color"][2] = m_BgColor.b;
+    jsonConfig["digits_brightness"] = m_DigitsPwm;
+    jsonConfig["led_ring_brightness"] = m_RingBrightness;
+    jsonConfig["to_idle"] = m_ToIdle;
+    jsonConfig["time_to_idle"] = m_TimeToIdle;
+
+    serializeJson(jsonConfig, output);
+}
+
+Config::Config () : m_DigitsPwm(1.0f), m_BgColor({255,0,255})
+{
+}
+
+bool loadConfigFile()
+{
+    File configFile = SPIFFS.open(CONFIG_FILE_PATH, "r");;
+
+    if(!configFile)
+        return false;
+
+    String data = configFile.readString();
+
+    Config(data).setAsGlobal();
+    configFile.close();
     return true;
 }
+
+bool saveGlobalConfig()
+{
+    File file = SPIFFS.open(CONFIG_FILE_PATH, "w");
+    Config::globalConfig.serialize(file);
+    file.close();
+}
+
+Config Config::globalConfig;

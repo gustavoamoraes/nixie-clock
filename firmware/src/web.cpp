@@ -1,12 +1,13 @@
 #include <uri/UriBraces.h>
 #include <WebServer.h>
 #include "SPIFFS.h"
+
 #include "globals.h"
+#include "constants.h"
 #include "config.h"
 #include "web.h"
 
 //Network
-const String static_files_path = "/static/";
 WebServer server(80);
 
 //MIME Types
@@ -29,7 +30,10 @@ String getMIMEType(String filename)
     return "image/jpeg";
   } else if (filename.endsWith(".ico")) {
     return "image/x-icon";
+  } else if (filename.endsWith(".json")) {
+    return "application/json";
   }
+
   return "text/plain";
 }
 
@@ -38,23 +42,13 @@ bool handleFileStream(String path)
 {
   String contentType = getMIMEType(path);
   File file = SPIFFS.open(path, "r");
-  bool sucess = false;
-
-  //If file exists
-  if(!file.isDirectory()){
-    server.streamFile(file, contentType);
-    sucess = true;
-  }
-
+  
+  if(!file) 
+    return false;
+  
+  server.streamFile(file, contentType);
   file.close();
-  return sucess;
-}
-
-void writeFile (String data, String path)
-{
-  File file = SPIFFS.open(path, "a");
-  file.print(data);
-  file.close();
+  return true;
 }
 
 //Redirect to home page file
@@ -63,38 +57,45 @@ void handleRoot()
   server.send(200, "text/html", "<script type=\"text/javascript\">window.location.href = \"static/index.html\";</script>");
 }
 
-//All web paths
-void bindAll() 
+void bindAdderesses() 
 {
     // Home
     server.on("/", HTTP_GET, handleRoot);
 
     //Static files
-    server.on ( UriBraces(static_files_path + "{}"), HTTP_GET, []()
+    server.on ( UriBraces(String(STATIC_FILES_PATH) + "{}"), HTTP_GET, []()
     {
-        String file_path = static_files_path + server.pathArg(0);
+        String file_path = STATIC_FILES_PATH + server.pathArg(0);
 
         if (!handleFileStream(file_path))
-        {
-          server.send(404, "text/plain", "FileNotFound");
-        }
+          server.send(404, "text/plain", "File not found.");
+    });
+
+    server.on("/config", HTTP_GET, []()
+    {   
+      if (!handleFileStream(CONFIG_FILE_PATH))
+        server.send(404, "text/plain", "Could not open config file.");
     });
 
     server.on("/config", HTTP_POST, []()
     {   
-        String data = server.arg(0);
+        String jsonConfig = server.arg(0);
 
-        Serial.print(data);
-
-        Config newConfig;
-
-        if(configFromJson(data, newConfig))
+        try
         {
-          globalSetConfig(newConfig);
-          writeFile(data, CONFIG_FILE_PATH);
+          Config newConfig (jsonConfig);
+
+          File configFile = SPIFFS.open(CONFIG_FILE_PATH, "w");
+          configFile.print(jsonConfig);
+          configFile.close();
+
+          newConfig.setAsGlobal();
+
           server.send(200);
-        }else{
-          server.send(406);
+        }
+        catch(const char* msg)
+        {
+          server.send(406, "text/plain", msg);
         }
     });
 }
@@ -102,21 +103,20 @@ void bindAll()
 //Thread function
 void serveFoverer (void* data) 
 {
-  while (true){
+  while (true)
     server.handleClient();
-  }
 }
 
 void startServer ()
 {
-  bindAll();
+  bindAdderesses();
   server.begin();
 
   //Start web sever thread
   xTaskCreatePinnedToCore(
     &serveFoverer, 
-    "WebServer", 
-    10240, 
+    "ClockWebPage", 
+    1024 * 30, 
     NULL, 
     0, 
     NULL,

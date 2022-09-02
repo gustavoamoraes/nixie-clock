@@ -7,18 +7,18 @@ class RingModule
 {
     public:
     
-        bool isActive;
+        bool isActive = false;
 
         virtual void update () {};
         virtual void change (int q) {};
-        virtual void back () {};
-        virtual void select () { Serial.print("Select form base");};
+        virtual void back () { isActive = false; };
+        virtual void select () {};
 
-        virtual Profile* getProfile() { return &profile; };
+        virtual Profile* getProfile() { return &m_Profile; };
 
         RingModule () {};
         ~RingModule () {};
 
     protected:
-        Profile profile;
+        Profile m_Profile;
 };

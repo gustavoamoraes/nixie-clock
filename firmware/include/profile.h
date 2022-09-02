@@ -8,5 +8,6 @@ struct Profile
 {
     Digit nixies[NIXIE_COUNT];
     RgbLed ledRing[LED_RING_COUNT];
-    void setDigits (const int digits[NIXIE_COUNT]);
+    void setDigits (const int (&new_digits)[NIXIE_COUNT]);
+    void displayNumber (int number);
 };

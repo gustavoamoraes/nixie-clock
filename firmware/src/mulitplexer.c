@@ -109,7 +109,7 @@ void multiplexer_init(MultiplexChannel** channels, size_t channel_count, size_t 
     //Create task
     xTaskCreatePinnedToCore(
         loop_task,  
-        "loop task",  
+        "Multiplexer",  
         1024 * 2,           
         (void*) args,            
         1,               

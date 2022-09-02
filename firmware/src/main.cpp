@@ -7,6 +7,7 @@
 #include <iostream>
 #include "SPI.h"
 #include "Wire.h"
+#include "SPI.h"
 #include "SPIFFS.h"
 
 #include "constants.h"
@@ -19,6 +20,7 @@
 #include "globals.h"
 #include "config.h"
 #include "web.h"
+#include "modifiers.h"
 
 #ifdef __cplusplus
   extern "C" {
@@ -30,15 +32,13 @@
   }
 #endif
 
-
 //
-MultiplexChannel* ringChannel;
 MultiplexChannel* ringChannels[1];
 Adafruit_NeoPixel pixels(NEO_PIXEL_COUNT, NEO_PIXELS_PIN, NEO_GRB + NEO_KHZ800);
 
 //Inputs
-Button backButton(13, 50, true);
-Button selectButton(34, 50, true);
+Button backButton(BACK_BUTTON_PIN, 50, true);
+Button selectButton(ENCODER_SW, 50, true);
 RotaryEncoder encoder(ENCODER_DT, ENCODER_CLK);
 
 //Time
@@ -46,22 +46,15 @@ RTC_DS3231 rtc;
 DateTime globalDatetime;
 
 RingModuleMain mainModule;
-//RingModuleTest clockModule;
-//RingModuleClock clockModule;
 
 //WiFi
 WiFiUDP udp;
 NTPClient ntpClient = NTPClient(udp);
 
 SPIClass* digitsRegister = NULL;
-
-Config globalConfig;
-
-int encoderTest = 0;
 bool canUpdateGlobalTime;
-const int color[3] {125, 0, 0};
-const int color2[3] {125, 0, 125};
-TaskHandle_t loop_task_handle_test;
+bool isIdle;
+int lastActiveTime;
 
 void initPins ()
 {
@@ -71,7 +64,7 @@ void initPins ()
   pinMode(ENCODER_DT, INPUT);  
   pinMode(ENCODER_CLK, INPUT);  
   pinMode(ENCODER_SW, INPUT);  
-
+  pinMode(BACK_BUTTON_PIN, INPUT);  
   pinMode(RTC_SQW_PIN, INPUT);
 }
 
@@ -80,7 +73,7 @@ void updateGlobalDatetime ()
   canUpdateGlobalTime = true;
 }
 
-void setBackgroundColor (RGBColor bgColor)
+void setBackgroundColor (RGBColor& bgColor)
 {
   for (size_t i = 0; i < NEO_PIXEL_COUNT; i++)
   {
@@ -88,12 +81,6 @@ void setBackgroundColor (RGBColor bgColor)
   }
 
   pixels.show();
-}
-
-void globalSetConfig(Config& newConfig)
-{
-  setBackgroundColor(newConfig.bgColor);
-  globalConfig = newConfig;
 }
 
 void updateDigits (Digit (&nixies)[NIXIE_COUNT])
@@ -120,24 +107,26 @@ void updateRingColors(RgbLed (&leds)[LED_RING_COUNT])
 
   for (size_t i = 0; i < LED_RING_COUNT; i++)
   {
-    leds[i].getColor(colorOut);
+    colorOut = leds[i].getColor();
 
-    //memcpy(ringChannel->values+(i*3), &colorOut, sizeof(RGBColor));
+    bool idle = !(isIdle & Config::globalConfig.m_ToIdle);
+    float mult = Config::globalConfig.m_RingBrightness;
 
-    ringChannel->values[(i*3)] = min(colorOut.r, (uint8_t) 255) / 255.0f * MULTIPLEXER_COUNTER_MAX;
-    ringChannel->values[(i*3)+1] = min(colorOut.g, (uint8_t) 255) / 255.0f * MULTIPLEXER_COUNTER_MAX;
-    ringChannel->values[(i*3)+2] = min(colorOut.b, (uint8_t) 255) / 255.0f * MULTIPLEXER_COUNTER_MAX;
+    ringChannels[0]->values[(i*3)] = colorOut.r / 255.0f * MULTIPLEXER_COUNTER_MAX * mult * idle;
+    ringChannels[0]->values[(i*3)+1] = colorOut.g / 255.0f * MULTIPLEXER_COUNTER_MAX * mult * idle;
+    ringChannels[0]->values[(i*3)+2] = colorOut.b / 255.0f * MULTIPLEXER_COUNTER_MAX * mult * idle;
   }
 }
 
 void wifiConnect()
 {
   WiFi.mode(WIFI_STA);
-  WiFi.begin(WiFi_SSID, WiFi_PASSWORD);
+  WiFi.disconnect();
 
   while (WiFi.status() != WL_CONNECTED) 
   {
-    delay(2);
+    WiFi.begin(WiFi_SSID, WiFi_PASSWORD);
+    vTaskDelay(pdMS_TO_TICKS(5000));
   }
 }
 
@@ -151,50 +140,71 @@ void setTimeByNTP ()
 
 void applyProfile (Profile* profile)
 {
-  //updateDigits(profile->nixies);
+  updateDigits(profile->nixies);
   updateRingColors(profile->ledRing);
-}
-
-void loadConfigFile()
-{
-  File file = SPIFFS.open(CONFIG_FILE_PATH, "r");
-  Config savedConfig;
-
-  //If file exists
-  if(file || !file.isDirectory())
-  {
-    String data = file.readString();
-    configFromJson(data, savedConfig);
-  }
-
-  globalSetConfig(savedConfig);
-  file.close();
 }
 
 void mainLoop(void* data)
 {
   while(1)
   {
+    isIdle = (millis() - lastActiveTime) > (Config::globalConfig.m_TimeToIdle * 1000);
+
+    setBackgroundColor(Config::globalConfig.m_BgColor);
+
     if( canUpdateGlobalTime){
       globalDatetime = rtc.now();
       canUpdateGlobalTime = false;
     }
 
     backButton.update();
-    if(backButton.wasPressed())
+    if(backButton.wasPressed()){
+      lastActiveTime = millis();
       mainModule.back();
+    }
 
     selectButton.update();
-    if(selectButton.wasPressed())
+    if(selectButton.wasPressed()){
+      lastActiveTime = millis();
       mainModule.select();
+    }
 
     int dir = encoder.direction();
-    if(dir != 0)
+    
+    if(dir != 0){
+      lastActiveTime = millis();
       mainModule.change(dir);
+    }
 
-    applyProfile(mainModule.getProfile());
-    vTaskDelay(pdMS_TO_TICKS(4));
+    mainModule.update();
+
+    Profile* currentProfile = mainModule.getProfile();
+    applyProfile(currentProfile);
+    vTaskDelay(pdMS_TO_TICKS(1));
   }
+}
+
+//Will be shown while the WiFi connects
+void pauseChamp ()
+{
+  Profile profile;
+
+  for (size_t i = 0; i < NIXIE_COUNT; i++)
+  {
+    profile.nixies[i].setDigit(9);
+  }
+
+  RGBColor ringColor {255, 0, 64};
+
+  for (size_t i = 0; i < LED_RING_COUNT; i++)
+  {
+    profile.ledRing[i].setColor(ringColor);
+    profile.ledRing[i].setModifier(DefaultColorOcilation);
+  }
+
+  RGBColor bgColor {255, 0, 255};
+  setBackgroundColor(bgColor);
+  applyProfile(&profile);
 }
 
 void setup() 
@@ -203,33 +213,39 @@ void setup()
   initPins ();
 
   //Pixels
-  //pixels.begin();
+  pixels.begin();
 
   //Digits
-  // digitsRegister = new SPIClass(VSPI);
-  // digitsRegister->begin(DIGITS_REGISTER_CLK, -1, DIGITS_REGISTER_DATA, DIGITS_REGISTER_CS);
-  // digitalWrite(DIGITS_REGISTER_CS, HIGH);
+  digitsRegister = new SPIClass(VSPI);
+  digitsRegister->begin(DIGITS_REGISTER_CLK, -1, DIGITS_REGISTER_DATA, DIGITS_REGISTER_CS);
+  digitalWrite(DIGITS_REGISTER_CS, HIGH);
 
   //PWM
-  // for (size_t i = 0; i < NIXIE_COUNT; i++)
-  // {
-  //   ledcSetup(i, PWM_FREQUENCY, PWM_RESOLUTION);
-  //   ledcAttachPin(NIXIE_PINS[i], i);
-  // }  
+  for (size_t i = 0; i < NIXIE_COUNT; i++)
+  {
+    ledcSetup(i, PWM_FREQUENCY, PWM_RESOLUTION);
+    ledcAttachPin(NIXIE_PINS[i], i);
+  } 
+
+  //LED Ring
+  ringChannels[0] = multiplexChannelFactory(LED_RING_COUNT, 3);
+  multiplexer_init(ringChannels, 1, 2);
+
+  pauseChamp();
 
   //RTC
-  // TwoWire* twoWire = new TwoWire(1);
-  // twoWire->begin(26,25,100000);
-  //if(!rtc.begin(twoWire)) {}
+  TwoWire* twoWire = new TwoWire(1);
+  twoWire->begin(26,25,100000);
+  rtc.begin(twoWire);
 
   //WiFi
   wifiConnect();
-  //setTimeByNTP();
+  setTimeByNTP();
 
   //Interupt
-  // rtc.disable32K();
-  // rtc.writeSqwPinMode(Ds3231SqwPinMode::DS3231_SquareWave1Hz);
-  // attachInterrupt(digitalPinToInterrupt(RTC_SQW_PIN), updateGlobalDatetime, FALLING );
+  rtc.disable32K();
+  rtc.writeSqwPinMode(Ds3231SqwPinMode::DS3231_SquareWave1Hz);
+  attachInterrupt(digitalPinToInterrupt(RTC_SQW_PIN), updateGlobalDatetime, FALLING );
 
   //File system
   SPIFFS.begin();
@@ -237,25 +253,22 @@ void setup()
   //Web page  
   startServer();
 
-  ringChannel = multiplexChannelFactory(LED_RING_COUNT, 3);
-  ringChannels[0] = ringChannel;
-  multiplexer_init(ringChannels, 1, 2);
-
-  applyProfile(mainModule.getProfile());
+  //Apply saved config
+  loadConfigFile();
 
   //Loop
   xTaskCreatePinnedToCore(
       mainLoop,  
       "MainLoop",  
-      1024 * 2,           
+      1024 * 15,           
       NULL,            
       1,               
-      &loop_task_handle_test,
+      NULL,
       0
   );
 }
 
 void loop()
 {
-  vTaskDelay(1000000);
+  vTaskDelete(NULL);
 } 
