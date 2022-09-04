@@ -47,6 +47,8 @@
         "string_view": "cpp",
         "esp_log.h": "c",
         "freertos.h": "c",
-        "esp_task_wdt.h": "c"
+        "esp_task_wdt.h": "c",
+        "bitset": "cpp",
+        "regex": "cpp"
     }
 }

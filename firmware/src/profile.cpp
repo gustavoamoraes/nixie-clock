@@ -12,23 +12,26 @@ void Profile::setDigits (const int (&new_digits)[NIXIE_COUNT])
 
 int extractDigits (int number, int k, int* list)
 {
-    int i = k;
+    int i = 0;
     int result = 0;
     while (i < k)
     { 
         result = number % 10;
         number = number / 10;
-        list[i] = result;
-        i--;
+        list[(k-1)-i] = result;
+        i++;
     }
 
     return result;
 }
 
-void Profile::displayNumber (int number)
+void Profile::displayNumber (size_t number)
 {
-  int digits [NIXIE_COUNT];
-  int log = log10(number);
-  extractDigits(number, log, digits);
+  int digits [NIXIE_COUNT] {0,0,0,0,0,0};
+
+  if(number == 0)
+    return setDigits(digits);
+
+  extractDigits(number, NIXIE_COUNT, digits);
   setDigits(digits);
 }

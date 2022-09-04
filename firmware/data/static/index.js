@@ -1,4 +1,3 @@
-// Simple example, see optional options for more configuration.
 const pickr = Pickr.create(
 {
     el: '.pickr-container',
@@ -32,9 +31,17 @@ var ringSliderLabel = $("#ringSliderLabel");
 bindLabelToSlider(nixieSlider, nixieSliderLabel)
 bindLabelToSlider(ringSlider, ringSliderLabel)
 
-fetch('/config')
-.then((response)=>response.json())
-.then((responseJson)=>{ applyConfig(responseJson);});
+pickr.on('init', instance => 
+{
+    getSavedConfig ();
+});
+
+function getSavedConfig ()
+{
+    fetch('/config')
+    .then((response)=>response.json())
+    .then((responseJson)=> { applyConfig(responseJson);});
+}
 
 function bindLabelToSlider (slider, label)
 {
@@ -46,8 +53,8 @@ function bindLabelToSlider (slider, label)
 
 function applyConfig (config)
 {   
-    let bgColor = `rgb(${config["background_color"][0]}, ${config["background_color"][1]}, ${config["background_color"][2]})`;
-    pickr.addSwatch(bgColor);
+    var bgColor = `rgb(${config["background_color"][0]}, ${config["background_color"][1]}, ${config["background_color"][2]})`;
+    pickr.setColor(bgColor, false);
     nixieSlider.val(config["digits_brightness"] * 100).trigger("input");
     ringSlider.val(config["led_ring_brightness"] * 100).trigger("input");
     idleTimeInput.val(config["time_to_idle"]);

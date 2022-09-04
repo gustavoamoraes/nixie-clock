@@ -18,15 +18,7 @@ void RingModuleDigitsBrightness::change(int q)
             m_Profile.ledRing[i].setColor(m_Color);
     }
 
-    int number = m_Ratio * 100;
-
-    int numberLenght = log10(number) + 1;
-
-    for (size_t i = numberLenght; i < NIXIE_COUNT; i++)
-    {
-        m_Profile.nixies[i].setModifier(Off);
-    }
-    
+    int number = m_Ratio * 100; 
     m_Profile.displayNumber(number);
 }
 

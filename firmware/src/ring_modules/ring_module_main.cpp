@@ -16,6 +16,8 @@ RingModuleMain::RingModuleMain () : m_IndexChild(NULL)
         m_Profile.nixies[i].setModifier(DefaultOcilation);
         m_Profile.nixies[i].setDigit(i);
     }
+
+    change(0);
 }
 
 void RingModuleMain::update () 

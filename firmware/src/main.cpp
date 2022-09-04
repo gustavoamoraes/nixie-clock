@@ -8,7 +8,7 @@
 #include "SPI.h"
 #include "Wire.h"
 #include "SPI.h"
-#include "SPIFFS.h"
+#include "LITTLEFS.h"
 
 #include "constants.h"
 #include "rotary_encoder.h"
@@ -54,7 +54,8 @@ NTPClient ntpClient = NTPClient(udp);
 SPIClass* digitsRegister = NULL;
 bool canUpdateGlobalTime;
 bool isIdle;
-int lastActiveTime;
+uint32_t  lastActiveTime;
+uint32_t  lastPixelsUpdateTime;
 
 void initPins ()
 {
@@ -68,18 +69,14 @@ void initPins ()
   pinMode(RTC_SQW_PIN, INPUT);
 }
 
-void updateGlobalDatetime ()
+void IRAM_ATTR updateGlobalDatetime ()
 {
   canUpdateGlobalTime = true;
 }
 
-void setBackgroundColor (RGBColor& bgColor)
+void globalSetBackgroundColor (RGBColor& bgColor)
 {
-  for (size_t i = 0; i < NEO_PIXEL_COUNT; i++)
-  {
-    pixels.setPixelColor(i, Adafruit_NeoPixel::Color(bgColor.r, bgColor.g, bgColor.b));
-  }
-
+  pixels.fill(Adafruit_NeoPixel::Color(bgColor.r, bgColor.g, bgColor.b));
   pixels.show();
 }
 
@@ -126,7 +123,7 @@ void wifiConnect()
   while (WiFi.status() != WL_CONNECTED) 
   {
     WiFi.begin(WiFi_SSID, WiFi_PASSWORD);
-    vTaskDelay(pdMS_TO_TICKS(5000));
+    delay(6000);
   }
 }
 
@@ -149,8 +146,6 @@ void mainLoop(void* data)
   while(1)
   {
     isIdle = (millis() - lastActiveTime) > (Config::globalConfig.m_TimeToIdle * 1000);
-
-    setBackgroundColor(Config::globalConfig.m_BgColor);
 
     if( canUpdateGlobalTime){
       globalDatetime = rtc.now();
@@ -180,7 +175,7 @@ void mainLoop(void* data)
 
     Profile* currentProfile = mainModule.getProfile();
     applyProfile(currentProfile);
-    vTaskDelay(pdMS_TO_TICKS(1));
+    delay(2);
   }
 }
 
@@ -199,11 +194,10 @@ void pauseChamp ()
   for (size_t i = 0; i < LED_RING_COUNT; i++)
   {
     profile.ledRing[i].setColor(ringColor);
-    profile.ledRing[i].setModifier(DefaultColorOcilation);
   }
 
   RGBColor bgColor {255, 0, 255};
-  setBackgroundColor(bgColor);
+  globalSetBackgroundColor(bgColor);
   applyProfile(&profile);
 }
 
@@ -245,10 +239,10 @@ void setup()
   //Interupt
   rtc.disable32K();
   rtc.writeSqwPinMode(Ds3231SqwPinMode::DS3231_SquareWave1Hz);
-  attachInterrupt(digitalPinToInterrupt(RTC_SQW_PIN), updateGlobalDatetime, FALLING );
+  attachInterrupt(digitalPinToInterrupt(RTC_SQW_PIN), updateGlobalDatetime, FALLING);
 
   //File system
-  SPIFFS.begin();
+  LITTLEFS.begin();
 
   //Web page  
   startServer();

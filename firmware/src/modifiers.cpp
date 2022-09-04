@@ -3,7 +3,7 @@
 
 float positiveSinWave (float n, float period, float t)
 {
-    return n * (std::cos(PI * 2 * (t * period)) + 1) / 2;
+    return n * (std::sin(PI * 2 * (t * period)) + 1) / 2;
 }
 
 RGBColor positiveSinWave (RGBColor color, float period)

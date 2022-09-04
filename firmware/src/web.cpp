@@ -1,6 +1,6 @@
 #include <uri/UriBraces.h>
 #include <WebServer.h>
-#include "SPIFFS.h"
+#include "LITTLEFS.h"
 
 #include "globals.h"
 #include "constants.h"
@@ -41,7 +41,7 @@ String getMIMEType(String filename)
 bool handleFileStream(String path) 
 {
   String contentType = getMIMEType(path);
-  File file = SPIFFS.open(path, "r");
+  File file = LITTLEFS.open(path, "r");
   
   if(!file) 
     return false;
@@ -85,7 +85,7 @@ void bindAdderesses()
         {
           Config newConfig (jsonConfig);
 
-          File configFile = SPIFFS.open(CONFIG_FILE_PATH, "w");
+          File configFile = LITTLEFS.open(CONFIG_FILE_PATH, "w");
           configFile.print(jsonConfig);
           configFile.close();
 
@@ -100,11 +100,13 @@ void bindAdderesses()
     });
 }
 
-//Thread function
 void serveFoverer (void* data) 
 {
   while (true)
+  {
     server.handleClient();
+    delay(1);
+  }
 }
 
 void startServer ()

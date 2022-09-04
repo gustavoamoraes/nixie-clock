@@ -2,6 +2,7 @@
 
 #include <Arduino.h>
 #include "rgbled.h"
+#include "globals.h"
 
 class Config
 {
@@ -14,7 +15,11 @@ class Config
         template <typename T>
         void serialize (T& output);
 
-        void setAsGlobal () { Config::globalConfig = *this; };
+        void setAsGlobal () 
+        {
+            Config::globalConfig = *this; 
+            globalSetBackgroundColor(Config::globalConfig.m_BgColor);
+        };
 
         float m_DigitsPwm = 1.0f;
         float m_RingBrightness = 1.0f;

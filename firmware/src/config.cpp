@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <iterator>
 
-#include "SPIFFS.h"
+#include "LITTLEFS.h"
 #include "constants.h"
 #include "rgbled.h"
 #include "config.h"
@@ -94,7 +94,7 @@ Config::Config () : m_DigitsPwm(1.0f), m_BgColor({255,0,255})
 
 bool loadConfigFile()
 {
-    File configFile = SPIFFS.open(CONFIG_FILE_PATH, "r");;
+    File configFile = LITTLEFS.open(CONFIG_FILE_PATH, "r");;
 
     if(!configFile)
         return false;
@@ -108,7 +108,7 @@ bool loadConfigFile()
 
 bool saveGlobalConfig()
 {
-    File file = SPIFFS.open(CONFIG_FILE_PATH, "w");
+    File file = LITTLEFS.open(CONFIG_FILE_PATH, "w");
     Config::globalConfig.serialize(file);
     file.close();
 }
